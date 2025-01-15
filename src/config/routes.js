@@ -16,7 +16,7 @@ export const publicPaths = {
   home: "/home",
   signUp: "/sign-up",
   productList: "/product-list",
-  productDetail: "/product-details/:id",
+  productDetail: "/product-details/:productId",
   addtoCart: "/shoppingBag",
   wishlistL: "/wishlist",
 };

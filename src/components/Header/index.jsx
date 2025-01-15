@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -10,10 +10,24 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
+import cartStore from "stores/cartStore"; // Import the cartStore
+import { observer } from "mobx-react";
 
-const Header = () => {
-  const [cartItemCount, setCartItemCount] = useState(2);
+const Header = observer(() => {
+  const [cartItemCount, setCartItemCount] = useState(0); // Default cart item count is 0
   const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+  // Update cart item count based on cartStore when component mounts or cart changes
+  useEffect(() => {
+    if (cartStore?.cart?.products) {
+      // Calculate the total quantity of items in the cart
+      const totalItems = cartStore.cart.products.reduce(
+        (acc, item) => acc + item.quantity,
+        0
+      );
+      setCartItemCount(totalItems);
+    }
+  }, [cartStore?.cart?.products]); // Re-run when cart products change
 
   return (
     <AppBar
@@ -165,7 +179,6 @@ const Header = () => {
                 color: "#050D52",
                 fontFamily:
                   '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
-                // fontFamily: "Prachason neue",
               }}
             >
               Wishlist
@@ -193,7 +206,6 @@ const Header = () => {
                 color: "#050D52",
                 fontFamily:
                   '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
-                // fontFamily: "Prachason neue",
               }}
             >
               Shopping bag
@@ -203,6 +215,6 @@ const Header = () => {
       </Toolbar>
     </AppBar>
   );
-};
+});
 
 export default Header;

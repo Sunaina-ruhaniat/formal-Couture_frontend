@@ -11,17 +11,16 @@ import toast from "react-hot-toast";
 class productStore {
   isLoading = false;
   productList = null;
-  selectedProduct = null; // State for storing the selected product
+  selectedProduct = null;
 
   constructor() {
     makeObservable(this, {
       isLoading: observable.ref,
       productList: observable.ref,
-      selectedProduct: observable.ref, // Observable for selected product
-
+      selectedProduct: observable.ref,
       productsData: computed,
       getProductList: action,
-      getProductById: action, // Make the new method observable
+      getProductById: action,
     });
   }
 
@@ -29,7 +28,6 @@ class productStore {
     return this.productList;
   }
 
-  // Existing method to fetch all products
   getProductList = async () => {
     runInAction(() => {
       this.productList = null;
@@ -43,7 +41,6 @@ class productStore {
             this.productList = res.data.products;
             this.isLoading = false;
           });
-          console.log("res.data.products", this.productList);
         } else {
           this.productList = null;
           toast("Error fetching Products");
@@ -57,21 +54,20 @@ class productStore {
       });
   };
 
-  // New method to fetch a product by its ID
   getProductById = async (productId) => {
     runInAction(() => {
-      this.selectedProduct = null; // Clear previous product data
+      this.selectedProduct = null;
       this.isLoading = true;
     });
     await axios
-      .get(`/product/${productId}`) // Adjust the endpoint to match your backend route
+      .get(`/product/${productId}`)
       .then((res) => {
+        console.log("res>>>", res);
         if (res.status === 200) {
           runInAction(() => {
-            this.selectedProduct = res.data.product; // Save the fetched product
+            this.selectedProduct = res.data.product;
             this.isLoading = false;
           });
-          console.log("Fetched product by ID", this.selectedProduct);
         } else {
           this.selectedProduct = null;
           toast("Error fetching the product");

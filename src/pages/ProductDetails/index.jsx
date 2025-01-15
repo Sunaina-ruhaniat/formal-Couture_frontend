@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,77 +10,81 @@ import {
   IconButton,
   InputLabel,
   TextField,
-  Divider,
   Breadcrumbs,
   Link,
   Snackbar,
 } from "@mui/material";
-import { ArrowForward, ArrowBack, ContentCopy } from "@mui/icons-material";
-import ProductDetails from "./components/Details";
-import cartStore from "stores/cartStore"; // Import CartStore
+import { ContentCopy } from "@mui/icons-material";
+import cartStore from "stores/cartStore";
 import referralCodeStore from "stores/referralCodeStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import productStore from "stores/productStore";
+import ProductDetails from "./components/Details";
 
 const ProductPage = () => {
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState(0);
+  const { productId } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState("S");
-  const [color, setColor] = useState("Light Blue");
+  const [size, setSize] = useState(""); // Initially empty
+  const [color, setColor] = useState(""); // Initially empty
+  const [fit, setFit] = useState(""); // Initially empty
   const [referralCode, setReferralCode] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const thumbnailContainerRef = useRef(null);
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // State to track the selected image
 
-  const images = [
-    "/assets/images/IMG_4986.JPG",
-    "/assets/images/IMG_5002.JPG",
-    "/assets/images/IMG_4990.JPG",
-    "/assets/images/IMG_5008.JPG",
-    "/assets/images/IMG_4994.JPG",
-    "/assets/images/IMG_5000.JPG",
-    "/assets/images/IMG_5009.JPG",
-  ];
+  const BASE_URL = "http://localhost:8000";
 
-  const handleThumbnailClick = (index) => {
-    setCurrentImage(index);
-  };
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (productId) {
+        setIsLoading(true);
+        await productStore.getProductById(productId);
+        const fetchedProduct = productStore.selectedProduct;
 
-  const handleNextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % images.length);
-  };
+        setProduct(fetchedProduct);
 
-  const handlePrevImage = () => {
-    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-  };
+        // Set default size, color, and fit based on the available options
+        setSize(fetchedProduct.sizes[0]); // Default to the first size
+        setColor(fetchedProduct.colors[0]); // Default to the first color
+        setFit(fetchedProduct.fits[0]); // Default to the first fit
+        setSelectedImage(fetchedProduct.images[0]); // Set the first image as the default selected image
 
-  const handleThumbnailScroll = (event) => {
-    if (thumbnailContainerRef.current) {
-      const scrollAmount = event.deltaY;
-      thumbnailContainerRef.current.scrollTop += scrollAmount;
-    }
-  };
+        setIsLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
 
   const handleAddToCart = () => {
-    const variant = { size, color, fit: "Slim" };
-    cartStore.addToCart(
-      "677936f61f04a52e960a36d6",
-      quantity,
-      variant,
-      navigate
-    );
+    if (!product || !size || !color || !fit) {
+      setSnackbarMessage("Please select size, color, and fit.");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    // Assuming `addToCart` function expects the product ID, quantity, and a variant object
+    const variant = { size, color, fit };
+    cartStore.addToCart(product._id, quantity, variant, navigate);
   };
 
   const handleAddToWishlist = () => {
-    const variant = { size, color, fit: "Slim" };
-    cartStore.addToWishlist("677551a183120f71bc1ff937", variant);
+    if (!product || !size || !color || !fit) {
+      setSnackbarMessage("Please select size, color, and fit.");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    const variant = { size, color, fit };
+    cartStore.addToWishlist(product._id, variant);
   };
 
   const generateReferralCode = () => {
     referralCodeStore
-      .generateReferralCode("K001") // Assuming K001 is the product ID
+      .generateReferralCode("K001")
       .then((code) => {
-        console.log("Generated Referral Code:", code);
         setReferralCode(code);
         setSnackbarMessage("Referral Code Generated!");
         setOpenSnackbar(true);
@@ -96,6 +100,14 @@ const ProductPage = () => {
     setSnackbarMessage("Referral Code Copied!");
     setOpenSnackbar(true);
   };
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (!product) {
+    return <Typography>No product found</Typography>;
+  }
 
   return (
     <div style={{ marginTop: 20, marginLeft: -2 }}>
@@ -121,143 +133,122 @@ const ProductPage = () => {
           PRODUCTS
         </Link>
         <Typography sx={{ color: "#000", fontWeight: "500" }}>
-          Product Details
+          {product.name}
         </Typography>
       </Breadcrumbs>
 
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
         <Grid container spacing={4}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              alignItems: "stretch",
-            }}
-          >
+          {/* Vertical image carousel on the left */}
+          <Grid item xs={12} md={3}>
             <Box
-              ref={thumbnailContainerRef}
-              onWheel={handleThumbnailScroll}
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                maxHeight: "670px",
-                maxWidth: "117px",
-                overflow: "hidden",
-                mr: { md: 2, xs: 0 },
-                scrollBehavior: "smooth",
+                maxHeight: "80vh",
+                overflowY: "auto",
+                paddingRight: 2,
               }}
             >
-              {images.map((img, index) => (
-                <img
+              {product.images.map((img, index) => (
+                <Box
                   key={index}
-                  src={img}
-                  alt={`Thumbnail ${index + 1}`}
-                  style={{
-                    width: "150px",
-                    height: "200px",
-                    opacity: currentImage === index ? 0.5 : 1,
-                    transition: "opacity 0.3s ease",
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleThumbnailClick(index)}
-                />
+                  onClick={() => setSelectedImage(img)}
+                >
+                  <img
+                    src={`${BASE_URL}${img}`}
+                    alt={`Thumbnail ${index + 1}`}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      objectFit: "cover",
+                      maxHeight: "100px",
+                      maxWidth: "100px",
+                    }}
+                  />
+                </Box>
               ))}
             </Box>
-
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                overflow: "hidden",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                mb: { xs: 2, md: 0 },
-              }}
-            >
-              <img
-                src={images[currentImage]}
-                alt="Product"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </Box>
-
-            <IconButton
-              onClick={handleNextImage}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "calc(100% - 40px)",
-                transform: "translateY(-50%)",
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: "50%",
-                "&:hover": { backgroundColor: "#f0f0f0" },
-              }}
-            >
-              <ArrowForward />
-            </IconButton>
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
+          {/* Large selected image on the right */}
+          <Grid item xs={12} md={6}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <img
+                src={`${BASE_URL}${selectedImage}`}
+                alt="Selected Product"
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  maxHeight: "500px",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+          </Grid>
+
+          {/* Product Details (Right side content) */}
+          <Grid item xs={12} md={3}>
             <Box>
               <Typography variant="h4" gutterBottom>
-                I'm a product
+                {product.name}
               </Typography>
               <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 gutterBottom
               >
-                SKU: 0013
+                SKU: {product.productCode}
               </Typography>
               <Typography variant="h5" sx={{ my: 2 }}>
-                $80.00
+                ${product.price}
               </Typography>
 
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
                 Color
               </Typography>
               <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                <Box
-                  sx={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    backgroundColor: "#555",
-                    border: "2px solid black",
-                  }}
-                ></Box>
-                <Box
-                  sx={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                    backgroundColor: "#fff",
-                    border: "1px solid black",
-                  }}
-                ></Box>
+                {product.colors.map((colorOption) => (
+                  <Box
+                    key={colorOption}
+                    sx={{
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                      backgroundColor: colorOption,
+                      border: "2px solid black",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setColor(colorOption)}
+                  />
+                ))}
               </Box>
 
-              <FormControl fullWidth sx={{ mb: 3, borderColor: "#b8aaad" }}>
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Size</InputLabel>
                 <Select value={size} onChange={(e) => setSize(e.target.value)}>
-                  <MenuItem value="S">Small</MenuItem>
-                  <MenuItem value="M">Medium</MenuItem>
-                  <MenuItem value="L">Large</MenuItem>
+                  {product.sizes.map((sizeOption) => (
+                    <MenuItem key={sizeOption} value={sizeOption}>
+                      {sizeOption}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel>Fit</InputLabel>
+                <Select value={fit} onChange={(e) => setFit(e.target.value)}>
+                  {product.fits.map((fitOption) => (
+                    <MenuItem key={fitOption} value={fitOption}>
+                      {fitOption}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -266,7 +257,7 @@ const ProductPage = () => {
                 label="Quantity"
                 defaultValue={1}
                 InputProps={{ inputProps: { min: 1 } }}
-                sx={{ width: "100px", mb: 3, borderColor: "#b8aaad" }}
+                sx={{ width: "100px", mb: 3 }}
                 onChange={(e) => setQuantity(e.target.value)}
               />
 
@@ -297,7 +288,6 @@ const ProductPage = () => {
               </Button>
             </Box>
 
-            {/* Referral Code Generation Section */}
             <Box sx={{ mt: 4 }}>
               <Typography variant="h6" gutterBottom>
                 Generate Referral Code
@@ -324,10 +314,17 @@ const ProductPage = () => {
             </Box>
           </Grid>
         </Grid>
-      </Box>
-      <ProductDetails />
 
-      {/* Snackbar for success/failure */}
+        {/* Integrating ProductDetails */}
+        <ProductDetails
+          description={product.description}
+          fabric={product.fabric}
+          careInstructions={product.careInstructions}
+          delivery={product.delivery}
+          returns={product.returns}
+        />
+      </Box>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
