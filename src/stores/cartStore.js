@@ -33,7 +33,7 @@ class CartStore {
       if (response.status === 200) {
         this.cart.push(response.data);
         toast.success(response.data.message);
-        navigate("/addToCart");
+        navigate("/shoppingBag");
       }
     } catch (error) {
       console.error("Error adding to cart", error);

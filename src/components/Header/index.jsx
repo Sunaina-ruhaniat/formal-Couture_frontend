@@ -152,9 +152,11 @@ const Header = () => {
 
           {/* Wishlist Icon */}
           <Box sx={{ textAlign: "center" }}>
-            <IconButton>
-              <img src="/assets/icons/love.png" alt="Wishlist" width={28} />
-            </IconButton>
+            <Link to="/wishlist">
+              <IconButton>
+                <img src="/assets/icons/love.png" alt="Wishlist" width={28} />
+              </IconButton>
+            </Link>
             <Typography
               sx={{
                 fontSize: "12px",
@@ -172,15 +174,17 @@ const Header = () => {
 
           {/* Shopping Bag Icon */}
           <Box sx={{ textAlign: "center" }}>
-            <IconButton>
-              <Badge badgeContent={cartItemCount} color="primary">
-                <img
-                  src="/assets/icons/shopping-bag.png"
-                  alt="Shopping Bag"
-                  width={28}
-                />
-              </Badge>
-            </IconButton>
+            <Link to="/shoppingBag">
+              <IconButton>
+                <Badge badgeContent={cartItemCount} color="primary">
+                  <img
+                    src="/assets/icons/shopping-bag.png"
+                    alt="Shopping Bag"
+                    width={28}
+                  />
+                </Badge>
+              </IconButton>
+            </Link>
             <Typography
               sx={{
                 fontSize: "12px",

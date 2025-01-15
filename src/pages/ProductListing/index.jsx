@@ -1,6 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
-import { Grid, Typography, Card, CardMedia, CardContent } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Card,
+  CardMedia,
+  CardContent,
+  CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PartywearPage from "pages/HomePage/components/PartyWear";
 import { observer } from "mobx-react"; // Import observer after installing mobx-react
@@ -11,10 +18,15 @@ const BASE_URL = "http://localhost:8000"; // Adjust to your server's base URL
 const ProductListing = observer(() => {
   const navigate = useNavigate();
   const { getProductList, productList } = productStore;
+  const [loading, setLoading] = useState(true); // Loading state for images
 
   useEffect(() => {
     getProductList(); // Fetch product list when the component mounts
-  }, []);
+  }, [getProductList]);
+
+  const handleImageLoad = () => {
+    setLoading(false); // Set loading to false when image is loaded
+  };
 
   return (
     <>
@@ -44,11 +56,26 @@ const ProductListing = observer(() => {
                       paddingBottom: "150%", // Maintain aspect ratio
                     }}
                   >
+                    {/* Show loader while image is loading */}
+                    {loading && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      >
+                        <CircularProgress size={24} />
+                      </div>
+                    )}
+
                     <CardMedia
                       component="img"
                       image={`${BASE_URL}${product.images[0]}`} // Prepend base URL to the image path
                       alt={product.name}
                       className="primary-image"
+                      onLoad={handleImageLoad} // Set loading to false when the image loads
                     />
                     <div className="hover-text">
                       <Typography variant="body1">Quick View</Typography>

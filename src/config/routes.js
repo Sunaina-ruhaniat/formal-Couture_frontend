@@ -6,6 +6,8 @@ export const privatePaths = {
   customer: {
     profile: "/profile",
     checkout: "/checkout",
+    CustomerShoppingBag: "/CustomerShoppingBag",
+    CustomerWishlist: "/CustomerWishlist",
   },
 };
 
@@ -15,5 +17,6 @@ export const publicPaths = {
   signUp: "/sign-up",
   productList: "/product-list",
   productDetail: "/product-details/:id",
-  addtoCart: "/addToCart",
+  addtoCart: "/shoppingBag",
+  wishlistL: "/wishlist",
 };

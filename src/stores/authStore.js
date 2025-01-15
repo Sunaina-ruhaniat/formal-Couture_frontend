@@ -27,6 +27,7 @@ class AuthStore {
       });
       if (res.status === 200) {
         const data = res?.data;
+        localStorage.setItem("userData", JSON.stringify(res));
         localStorage.setItem("userId", data?.user?._id);
         localStorage.setItem("role", data?.user?.role);
         localStorage.setItem("isLoggedIn", true);
