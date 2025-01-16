@@ -7,19 +7,17 @@ import {
   MenuItem,
   FormControl,
   Grid,
-  IconButton,
   InputLabel,
   TextField,
   Breadcrumbs,
   Link,
   Snackbar,
 } from "@mui/material";
-import { ContentCopy } from "@mui/icons-material";
 import cartStore from "stores/cartStore";
-import referralCodeStore from "stores/referralCodeStore";
 import { useNavigate, useParams } from "react-router-dom";
 import productStore from "stores/productStore";
 import ProductDetails from "./components/Details";
+import GenerateReferralCode from "./components/GenerateReferralCode";
 
 const ProductPage = () => {
   const navigate = useNavigate();
@@ -28,7 +26,6 @@ const ProductPage = () => {
   const [size, setSize] = useState(""); // Initially empty
   const [color, setColor] = useState(""); // Initially empty
   const [fit, setFit] = useState(""); // Initially empty
-  const [referralCode, setReferralCode] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [product, setProduct] = useState(null);
@@ -43,10 +40,7 @@ const ProductPage = () => {
         setIsLoading(true);
         await productStore.getProductById(productId);
         const fetchedProduct = productStore.selectedProduct;
-
         setProduct(fetchedProduct);
-
-        // Set default size, color, and fit based on the available options
         setSize(fetchedProduct.sizes[0]); // Default to the first size
         setColor(fetchedProduct.colors[0]); // Default to the first color
         setFit(fetchedProduct.fits[0]); // Default to the first fit
@@ -65,7 +59,6 @@ const ProductPage = () => {
       return;
     }
 
-    // Assuming `addToCart` function expects the product ID, quantity, and a variant object
     const variant = { size, color, fit };
     cartStore.addToCart(product._id, quantity, variant, navigate);
   };
@@ -79,26 +72,6 @@ const ProductPage = () => {
 
     const variant = { size, color, fit };
     cartStore.addToWishlist(product._id, variant);
-  };
-
-  const generateReferralCode = () => {
-    referralCodeStore
-      .generateReferralCode(product.productCode)
-      .then((code) => {
-        setReferralCode(code);
-        setSnackbarMessage("Referral Code Generated!");
-        setOpenSnackbar(true);
-      })
-      .catch(() => {
-        setSnackbarMessage("Failed to generate referral code.");
-        setOpenSnackbar(true);
-      });
-  };
-
-  const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    setSnackbarMessage("Referral Code Copied!");
-    setOpenSnackbar(true);
   };
 
   if (isLoading) {
@@ -137,7 +110,7 @@ const ProductPage = () => {
         </Typography>
       </Breadcrumbs>
 
-      <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
+      <Box sx={{ maxWidth: "1400px", margin: "0 auto", padding: 2 }}>
         <Grid container spacing={4}>
           {/* Vertical image carousel on the left */}
           <Grid item xs={12} md={3}>
@@ -230,7 +203,7 @@ const ProductPage = () => {
                 ))}
               </Box>
 
-              <FormControl fullWidth sx={{ mb: 3 }}>
+              <FormControl fullWidth sx={{ mb: 3, borderRadius: 0 }}>
                 <InputLabel>Size</InputLabel>
                 <Select value={size} onChange={(e) => setSize(e.target.value)}>
                   {product.sizes.map((sizeOption) => (
@@ -266,9 +239,9 @@ const ProductPage = () => {
                 fullWidth
                 color="primary"
                 sx={{
-                  py: 1.5,
-                  fontSize: "18px",
-                  padding: "25px 60px",
+                  // py: 1.5,
+                  // fontSize: "18px",
+                  // padding: "25px 60px",
                   backgroundColor: "#b8aaad",
                   borderRadius: 0,
                   "&:hover": { backgroundColor: "#ffffff", color: "#333333" },
@@ -281,50 +254,25 @@ const ProductPage = () => {
               <Button
                 variant="outlined"
                 fullWidth
-                sx={{ mt: 2 }}
+                sx={{ mt: 2, borderRadius: 0 }}
                 onClick={handleAddToWishlist}
               >
                 ADD TO WISHLIST
               </Button>
             </Box>
 
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="h6" gutterBottom>
-                Generate Referral Code
-              </Typography>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={generateReferralCode}
-                sx={{ mb: 2 }}
-              >
-                Generate Code
-              </Button>
-
-              {referralCode && (
-                <Box>
-                  <Typography variant="body1">
-                    Your Referral Code: <strong>{referralCode}</strong>
-                  </Typography>
-                  <IconButton onClick={copyReferralCode}>
-                    <ContentCopy />
-                  </IconButton>
-                </Box>
-              )}
-            </Box>
+            <GenerateReferralCode />
           </Grid>
         </Grid>
-
-        {/* Integrating ProductDetails */}
-        <ProductDetails
-          description={product.description}
-          fabric={product.fabric}
-          careInstructions={product.careInstructions}
-          delivery={product.delivery}
-          returns={product.returns}
-        />
       </Box>
-
+      {/* Integrating ProductDetails */}
+      <ProductDetails
+        description={product.description}
+        fabric={product.fabric}
+        careInstructions={product.careInstructions}
+        delivery={product.delivery}
+        returns={product.returns}
+      />
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
