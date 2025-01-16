@@ -18,5 +18,10 @@ export const publicPaths = {
   productList: "/product-list",
   productDetail: "/product-details/:productId",
   addtoCart: "/shoppingBag",
-  wishlistL: "/wishlist",
+  wishlist: "/wishlist",
+  secureCheckout: "/secure/checkout/login/",
+  secureCheckoutLoginExistingCustomer:
+    "/secure/checkout/login-existing-customer/",
+  shippingAddress: "/secure/checkout/",
+  paymentStage: "/secure/checkout/payment",
 };

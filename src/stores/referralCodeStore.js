@@ -32,7 +32,6 @@ class ReferralCodeStore {
       const { data } = await referralAxios.post("referral/generate-referral", {
         targetEntity,
       });
-      console.log("API Response Data:", data);
       runInAction(() => {
         this.referralCode = data.referral.linkId;
         this.isLoadingReferral = false;

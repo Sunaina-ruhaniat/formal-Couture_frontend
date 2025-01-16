@@ -18,6 +18,19 @@ const AddToCartPage = lazy(() => import("pages/AddCartPage"));
 const CheckoutPage = lazy(() =>
   import("pages/AddCartPage/components/CheckoutPage")
 );
+const WishListPage = lazy(() => import("pages/WishListPage"));
+const SecureCheckoutPage = lazy(() =>
+  import("pages/AddCartPage/components/SecureCheckout")
+);
+const SecureCheckoutLoginExistingCustomerPage = lazy(() =>
+  import("pages/AddCartPage/components/AccountLogin")
+);
+const CheckoutFormPage = lazy(() =>
+  import("pages/AddCartPage/components/CheckoutForm")
+);
+const PaymentPage = lazy(() =>
+  import("pages/AddCartPage/components/PaymentPage")
+);
 
 const publicRoutes = [
   {
@@ -44,6 +57,26 @@ const publicRoutes = [
     path: publicPaths.addtoCart,
     Component: <AddToCartPage />,
   },
+  {
+    path: publicPaths.wishlist,
+    Component: <WishListPage />,
+  },
+  {
+    path: publicPaths.secureCheckout,
+    Component: <SecureCheckoutPage />,
+  },
+  {
+    path: publicPaths.secureCheckoutLoginExistingCustomer,
+    Component: <SecureCheckoutLoginExistingCustomerPage />,
+  },
+  {
+    path: publicPaths.shippingAddress,
+    Component: <CheckoutFormPage />,
+  },
+  {
+    path: publicPaths.paymentStage,
+    Component: <PaymentPage />,
+  },
 ];
 
 const privateRoutes = [
@@ -54,6 +87,14 @@ const privateRoutes = [
   {
     path: privatePaths.customer.checkout,
     Component: <CheckoutPage />,
+  },
+  {
+    path: privatePaths.customer.CustomerWishlist,
+    Component: <WishListPage />,
+  },
+  {
+    path: privatePaths.customer.CustomerShoppingBag,
+    Component: <AddToCartPage />,
   },
 ];
 

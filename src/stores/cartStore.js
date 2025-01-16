@@ -5,27 +5,28 @@ import { toast } from "react-hot-toast";
 class CartStore {
   cart = [];
   wishlist = [];
-  userId = localStorage.getItem("userId") || null; // Retrieve user ID if stored after login
+  userId = localStorage.getItem("userId") || null;
+  token = localStorage.getItem("token") || null;
 
   constructor() {
     makeObservable(this, {
       cart: observable,
       wishlist: observable,
       userId: observable,
+
       addToCart: action,
       addToWishlist: action,
       getCart: action,
-      updateCartQuantity: action,
       removeFromCart: action,
+      applyDiscount: action,
     });
+
+    this.cart = [];
   }
 
   // Add to Cart function
   addToCart = async (productId, quantity, variant, navigate) => {
-    const url = this.userId
-      ? "/cart/add-to-cart" // If logged in, use this API
-      : "/cart/guest/add-to-cart"; // For guests, same API but with guest handling on the backend
-
+    const url = this.userId ? "/cart/add-to-cart" : "/cart/guest/add-to-cart";
     try {
       const response = await axios.post(url, {
         productId,
@@ -71,88 +72,97 @@ class CartStore {
 
   // Fetch cart data
   getCart = async () => {
+    const url = this.userId ? "/cart/get-cart" : "/cart/guest/get-cart";
     try {
-      const response = await axios.get("/cart/get-cart", {
+      const response = await axios.get(url, {
         headers: {
-          Cookie: "connect.sid=your-session-id; token=your-token", // Pass session & token
+          Cookie: "connect.sid=your-session-id; token=your-token",
         },
       });
 
       if (response.status === 200) {
-        console.log("Here", response);
-        this.cart = response.data.cart;
-        console.log("response of get cart", response);
+        // this.cart = Array.isArray(response.data.cart) ? response.data.cart : [];
+        if (response.data.cart && Array.isArray(response.data.cart.products)) {
+          this.cart = response.data.cart;
+        } else {
+          toast.error("Invalid cart data received.");
+        }
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
+      this.cart = [];
     }
   };
 
-  // Calculate subtotal based on cart data
+  // Apply discount to the cart total
+  applyDiscount = (discountAmount) => {
+    this.discount = discountAmount;
+  };
+
+  // Calculate subtotal including any discounts
   calculateSubtotal = () => {
-    if (this.cart && this.cart.products) {
+    if (this.cart && this.cart.products && Array.isArray(this.cart.products)) {
       return this.cart.products.reduce((total, item) => {
-        return total + item.price * item.quantity;
+        if (item.price && item.quantity) {
+          return total + item.price * item.quantity;
+        }
+        return total;
       }, 0);
     }
     return 0;
   };
 
-  // Update cart item quantity
-  updateCartQuantity = async (productId, quantity) => {
+  // Remove item from cart
+  removeFromCart = async (productId, quantity, variant) => {
+    const url = this.token
+      ? "/cart/remove-from-cart"
+      : "/cart/guest/remove-from-cart";
+
     try {
-      const response = await axios.post("/cart/update-quantity", {
+      const response = await axios.put(url, {
         productId,
         quantity,
-        userId: this.userId,
+        variant,
       });
 
       if (response.status === 200) {
-        const updatedCart = this.cart.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: response.data.newQuantity }
-            : item
-        );
-        this.cart = updatedCart;
+        // This line ensures that the item is removed from the cart after successful removal.
+        this.cart = this.cart.filter((item) => {
+          return (
+            item.productId !== productId ||
+            JSON.stringify(item.variant) !== JSON.stringify(variant)
+          );
+        });
+
+        // You can also use a toast to notify the user that the item was removed
+        toast.success("Item removed from cart!");
       }
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Error removing from cart", error);
     }
   };
 
-  // Remove item from cart
-  removeFromCart = async (productId) => {
-    try {
-      const response = await axios.post("/cart/remove-from-cart", {
-        productId,
-        userId: this.userId,
-      });
-
-      if (response.status === 200) {
-        this.cart = this.cart.filter((item) => item.productId !== productId);
-      }
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
-    }
-  };
-
+  // Inside updateQuantity function
   updateQuantity = (productId, newQuantity, variant) => {
-    // Find the item in the cart and update its quantity
-    const updatedCart = this.cart.map((item) => {
-      if (
-        item.productId === productId &&
-        JSON.stringify(item.variant) === JSON.stringify(variant)
-      ) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
+    if (Array.isArray(this.cart)) {
+      const updatedCart = this.cart.map((item) => {
+        if (
+          item.productId === productId &&
+          JSON.stringify(item.variant) === JSON.stringify(variant)
+        ) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
 
-    // Update the cart state
-    this.cart = updatedCart;
+      // Update the cart state
+      this.cart = updatedCart;
 
-    // Save the updated cart to local storage (if needed)
-    localStorage.setItem("cart", JSON.stringify(this.cart));
+      // Save the updated cart to local storage (if needed)
+      localStorage.setItem("cart", JSON.stringify(this.cart));
+    } else {
+      console.error("Cart is not an array");
+    }
   };
 }
 

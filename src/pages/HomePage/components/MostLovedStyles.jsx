@@ -6,22 +6,22 @@ const MostLovedStyles = () => {
     {
       image: "/assets/images/IMG_4809.JPG",
       title: "Livia Wool Coat",
-      price: "£379",
+      price: "Rs.379",
     },
     {
       image: "/assets/images/IMG_4977.JPG",
       title: "Petite Cavendish Wool Coat",
-      price: "£329",
+      price: "Rs.329",
     },
     {
       image: "/assets/images/IMG_5017.JPG",
       title: "Cavendish Wool Coat",
-      price: "£329",
+      price: "Rs.329",
     },
     {
       image: "/assets/images/IMG_5039.JPG",
       title: "Petite Livia Wool Coat",
-      price: "£379",
+      price: "Rs.379",
     },
   ];
 

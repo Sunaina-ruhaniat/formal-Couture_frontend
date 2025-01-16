@@ -7,7 +7,7 @@
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
     "@mui/icons-material": "^6.3.0",
-    "@mui/material": "^6.3.0",
+    "@mui/material": "^6.4.0",
     "@mui/x-date-pickers": "^7.23.3",
     "@react-google-maps/api": "^2.20.5",
     "apexcharts": "^4.3.0",

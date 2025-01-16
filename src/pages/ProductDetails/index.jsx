@@ -83,7 +83,7 @@ const ProductPage = () => {
 
   const generateReferralCode = () => {
     referralCodeStore
-      .generateReferralCode("K001")
+      .generateReferralCode(product.productCode)
       .then((code) => {
         setReferralCode(code);
         setSnackbarMessage("Referral Code Generated!");
