@@ -12,7 +12,7 @@ class productStore {
   isLoading = false;
   productList = null;
   selectedProduct = null;
-
+  searchedProductList = null;
   constructor() {
     makeObservable(this, {
       isLoading: observable.ref,
@@ -43,6 +43,32 @@ class productStore {
           });
         } else {
           this.productList = null;
+          toast("Error fetching Products");
+        }
+      })
+      .catch((error) => {
+        runInAction(() => {
+          this.isLoading = false;
+        });
+        toast("Error fetching Products");
+      });
+  };
+
+  getSearchedProductList = async (searchKeyword) => {
+    runInAction(() => {
+      this.searchedProductList = null;
+      this.isLoading = true;
+    });
+    await axios
+      .get(`/product/get-products?search=${searchKeyword}`)
+      .then((res) => {
+        if (res.status === 200) {
+          runInAction(() => {
+            this.searchedProductList = res.data.products;
+            this.isLoading = false;
+          });
+        } else {
+          this.searchedProductList = null;
           toast("Error fetching Products");
         }
       })

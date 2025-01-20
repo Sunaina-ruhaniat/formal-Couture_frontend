@@ -1,0 +1,44 @@
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+
+.product_list {
+	// width: auto;
+	height: auto;
+	width: 50vw;
+	padding: 50px;
+	display: flex;
+	gap: 10px;
+	overflow: scroll;
+	// flex-wrap: wrap;
+	.product_item {
+		a {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			img {
+				width: 174px;
+				height: 243px;
+			}
+		}
+	}
+}
+.suggestions__content--categories {
+	box-shadow: 0 0.0625rem 0.3125rem 0 rgba(23, 23, 24, 0.25);
+	margin-top: 18px;
+  border-radius: 8px;
+	.arrow-up {
+		left: 20px;
+		display: block;
+		border: solid #eee;
+		border-width: 0 0.0625rem 0.0625rem 0;
+		padding: 0.4375rem;
+		-webkit-transform: rotate(-135deg);
+		transform: rotate(-135deg);
+		top: -0.5625rem;
+		position: absolute;
+		background-color: white;
+	}
+}
+.noProduct {
+  padding: 50px;
+}
