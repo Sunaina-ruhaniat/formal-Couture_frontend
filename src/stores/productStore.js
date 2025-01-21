@@ -13,17 +13,26 @@ class productStore {
   productList = null;
   selectedProduct = null;
   searchedProductList = null;
+  productListByCategory = {
+    "limited-edition": [],
+    "evergreen-classic": []
+  };
   constructor() {
     makeObservable(this, {
       isLoading: observable.ref,
       productList: observable.ref,
       selectedProduct: observable.ref,
+      productListByCategory: observable,
       productsData: computed,
+      productByCategoryData: computed,
       getProductList: action,
       getProductById: action,
+      getProductByCategory: action
     });
   }
-
+  get productByCategoryData() {
+    return this.productListByCategory;
+  }
   get productsData() {
     return this.productList;
   }
@@ -54,6 +63,37 @@ class productStore {
       });
   };
 
+  /**
+   * 
+   * @param {'limited-edition' | 'evergreen-classic'} category 
+   */
+
+  getProductByCategory = async (category) => {
+    runInAction(() => {
+      this.productListByCategory[category] = null;
+      this.isLoading = true;
+    });
+    let res = null;
+    try {
+      res = await axios.get(`/product/get-products?category=${category}&limit=4`);
+      if (res.status === 200) {
+        runInAction(() => {
+          this.productListByCategory[category] = res.data.products;
+        });
+      } else {
+        throw new Error("Error fetching Products");
+      }
+    } catch (e) {
+      runInAction(() => {
+        this.productListByCategory[category] = null;
+      });
+      toast("Error fetching Products");
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  };
   getSearchedProductList = async (searchKeyword) => {
     runInAction(() => {
       this.searchedProductList = null;

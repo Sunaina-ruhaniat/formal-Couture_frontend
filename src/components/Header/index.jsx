@@ -21,6 +21,7 @@ const Header = observer(() => {
 	const [cartItemCount, setCartItemCount] = useState(0);
 	const isLoggedIn = localStorage.getItem('isLoggedIn');
 	const [searchedProducts, setSearchedProducts] = useState([]);
+	const [isSearched, setIsSearched] = useState(false);
 
 	useEffect(() => {
 		const products = toJS(cartStore.cart.products);
@@ -36,6 +37,7 @@ const Header = observer(() => {
 	const handleInputChange = _.debounce(async (e) => {
 		const val = e.target.value;
 		await productStore.getSearchedProductList(val);
+		setIsSearched(true);
 		setSearchedProducts(productStore.searchedProductList);
 		// setSearchedProducts(products);
 	}, 200);
@@ -87,6 +89,7 @@ const Header = observer(() => {
 							onChange={handleInputChange}
 							onBlur={() => {
 								setSearchedProducts([]);
+								setIsSearched(false);
 							}}
 							onFocus={handleInputChange}
 							sx={{
@@ -113,7 +116,7 @@ const Header = observer(() => {
 							}}
 							className="suggestions__content--categories"
 						>
-							<span className='arrow-up position-absolute bg-white'></span>
+							<span className="arrow-up position-absolute bg-white"></span>
 							{searchedProducts?.length ? (
 								<div className="product_list">
 									{searchedProducts.map((product) => {
@@ -130,10 +133,10 @@ const Header = observer(() => {
 										);
 									})}
 								</div>
+							) : isSearched ? (
+								<div className="noProduct">Sorry, Nothing to show here!!</div>
 							) : (
-								<div className="noProduct">
-									Sorry, Nothing to show here!!
-								</div>
+								<></>
 							)}
 						</Box>
 					</Box>
