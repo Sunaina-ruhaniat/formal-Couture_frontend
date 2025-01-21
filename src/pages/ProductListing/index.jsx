@@ -55,7 +55,7 @@ const ProductListing = observer(() => {
                       boxShadow: "none",
                       overflow: "hidden",
                       cursor: "pointer",
-                      height: "600px",
+                      height: "700px",
                     }}
                     className="product-card"
                     onClick={() => navigate(`/product-details/${product._id}`)}
@@ -102,7 +102,10 @@ const ProductListing = observer(() => {
                     <Typography
                       variant="body1"
                       align="center"
-                      style={{ fontWeight: 500, marginBottom: "5px" }}
+                      style={{
+                        fontWeight: 500,
+                        marginBottom: "5px",
+                      }}
                     >
                       {product.name}
                     </Typography>

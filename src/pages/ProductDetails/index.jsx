@@ -12,6 +12,7 @@ import {
   Breadcrumbs,
   Link,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import cartStore from "stores/cartStore";
 import { useNavigate, useParams } from "react-router-dom";
@@ -82,6 +83,14 @@ const ProductPage = () => {
     return <Typography>No product found</Typography>;
   }
 
+  const handleImageClick = (img) => {
+    setSelectedImage(img);
+    setIsLoading(true);
+    const imgPreload = new Image();
+    imgPreload.src = `${BASE_URL}${img}`;
+    imgPreload.onload = () => setIsLoading(false);
+  };
+
   return (
     <div style={{ marginTop: 20, marginLeft: -2 }}>
       <Breadcrumbs
@@ -111,76 +120,99 @@ const ProductPage = () => {
       </Breadcrumbs>
 
       <Box sx={{ maxWidth: "1400px", margin: "0 auto", padding: 2 }}>
-        <Grid container spacing={4}>
+        <Grid container spacing={2} sx={{ marginTop: 6, marginLeft: 8 }}>
           {/* Vertical image carousel on the left */}
-          <Grid item xs={12} md={3}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                maxHeight: "80vh",
-                overflowY: "auto",
-                paddingRight: 2,
-              }}
-            >
-              {product.images.map((img, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    cursor: "pointer",
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              maxHeight: "80vh",
+              overflowY: "auto",
+              paddingRight: 2,
+            }}
+          >
+            {product.images.map((img, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  blur: img === selectedImage ? "1" : "none",
+                  // padding: "4px",
+                  borderRadius: "4px",
+                }}
+                onClick={() => handleImageClick(img)}
+              >
+                <img
+                  src={`${BASE_URL}${img}`}
+                  alt={`Thumbnail ${index + 1}`}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "cover",
+                    maxHeight: "180px",
+                    maxWidth: "100px",
                   }}
-                  onClick={() => setSelectedImage(img)}
-                >
-                  <img
-                    src={`${BASE_URL}${img}`}
-                    alt={`Thumbnail ${index + 1}`}
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      objectFit: "cover",
-                      maxHeight: "100px",
-                      maxWidth: "100px",
-                    }}
-                  />
-                </Box>
-              ))}
-            </Box>
-          </Grid>
+                />
+              </Box>
+            ))}
+          </Box>
 
           {/* Large selected image on the right */}
-          <Grid item xs={12} md={6}>
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <img
-                src={`${BASE_URL}${selectedImage}`}
-                alt="Selected Product"
+          <Box
+            sx={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {isLoading && (
+              <div
                 style={{
-                  maxWidth: "100%",
-                  height: "auto",
-                  maxHeight: "500px",
-                  objectFit: "cover",
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
                 }}
-              />
-            </Box>
-          </Grid>
+              >
+                <CircularProgress size={24} />
+              </div>
+            )}
+            <img
+              src={`${BASE_URL}${selectedImage}`}
+              alt="Selected Product"
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                maxHeight: "600px",
+                objectFit: "cover",
+                display: isLoading ? "none" : "block",
+              }}
+            />
+          </Box>
 
           {/* Product Details (Right side content) */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={6} sx={{ marginLeft: 8 }}>
             <Box>
               <Typography variant="h4" gutterBottom>
                 {product.name}
               </Typography>
-              <Typography
+              {/* <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 gutterBottom
               >
-                SKU: {product.productCode}
-              </Typography>
-              <Typography variant="h5" sx={{ my: 2 }}>
-                ${product.price}
+                Product Code: {product.productCode}
+              </Typography> */}
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                gutterBottom
+                sx={{ my: 2 }}
+              >
+                Rs.{product.price}
               </Typography>
 
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
@@ -193,7 +225,7 @@ const ProductPage = () => {
                     sx={{
                       width: "24px",
                       height: "24px",
-                      borderRadius: "50%",
+                      // borderRadius: "50%",
                       backgroundColor: colorOption,
                       border: "2px solid black",
                       cursor: "pointer",
@@ -203,27 +235,32 @@ const ProductPage = () => {
                 ))}
               </Box>
 
-              <FormControl fullWidth sx={{ mb: 3, borderRadius: 0 }}>
-                <InputLabel>Size</InputLabel>
-                <Select value={size} onChange={(e) => setSize(e.target.value)}>
-                  {product.sizes.map((sizeOption) => (
-                    <MenuItem key={sizeOption} value={sizeOption}>
-                      {sizeOption}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Box sx={{ display: "flex" }}>
+                <FormControl fullWidth sx={{ mb: 3, borderRadius: 0 }}>
+                  <InputLabel>Size</InputLabel>
+                  <Select
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                  >
+                    {product.sizes.map((sizeOption) => (
+                      <MenuItem key={sizeOption} value={sizeOption}>
+                        {sizeOption}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Fit</InputLabel>
-                <Select value={fit} onChange={(e) => setFit(e.target.value)}>
-                  {product.fits.map((fitOption) => (
-                    <MenuItem key={fitOption} value={fitOption}>
-                      {fitOption}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel>Fit</InputLabel>
+                  <Select value={fit} onChange={(e) => setFit(e.target.value)}>
+                    {product.fits.map((fitOption) => (
+                      <MenuItem key={fitOption} value={fitOption}>
+                        {fitOption}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
 
               <TextField
                 type="number"
