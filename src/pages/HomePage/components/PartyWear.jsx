@@ -65,34 +65,31 @@ const PartywearPage = () => {
 
         {/* Categories */}
         <Box display="flex" gap={1} flexWrap="wrap" mb={2} ml={4}>
-          {[
-            "PARTY DRESSES",
-            "EVENING DRESSES",
-            "VELVET DRESSES",
-            "SEQUIN DRESSES",
-          ].map((category, index) => (
-            <Button
-              key={index}
-              variant="outlined"
-              size="small"
-              sx={{
-                fontSize: "14px",
-                fontWeight: "400",
-                textTransform: "none",
-                color: "#000",
-                borderColor: "#dcdcdc",
-                letterSpacing: "0.18rem",
-                borderRadius: "0",
-                padding: "10px 16px",
-                minWidth: "fit-content",
-                "&:hover": {
-                  borderColor: "#000",
-                },
-              }}
-            >
-              {category}
-            </Button>
-          ))}
+          {["LIMITED EDITION", "EVERGREEN CLASSICS", "MOST LOVED STYLES"].map(
+            (category, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  textTransform: "none",
+                  color: "#000",
+                  borderColor: "#dcdcdc",
+                  letterSpacing: "0.18rem",
+                  borderRadius: "0",
+                  padding: "10px 16px",
+                  minWidth: "fit-content",
+                  "&:hover": {
+                    borderColor: "#000",
+                  },
+                }}
+              >
+                {category}
+              </Button>
+            )
+          )}
         </Box>
       </Box>
 

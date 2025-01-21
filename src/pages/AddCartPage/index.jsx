@@ -11,11 +11,12 @@ import {
   MenuItem,
   Breadcrumbs,
   Divider,
+  Link,
   Link as MuiLink,
 } from "@mui/material";
 import { observer } from "mobx-react";
 import cartStore from "stores/cartStore"; // Import the cartStore
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import OrderSummary from "./components/OrderSummary";
 import PromoCode from "./components/PromoCode";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";

@@ -108,9 +108,9 @@ const PaymentPage = () => {
           <Grid item xs={6}>
             <Typography align="right">Rs.144.00</Typography>
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Typography>Delivery Method</Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}>
             <Typography align="right">Rs.2.95</Typography>
           </Grid>

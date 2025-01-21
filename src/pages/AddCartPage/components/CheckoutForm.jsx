@@ -31,7 +31,7 @@ const CheckoutForm = () => {
       </Typography>
 
       {/* Delivery Options */}
-      <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
+      {/* <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
         <FormControl component="fieldset" fullWidth>
           <FormLabel component="legend">
             Choose your delivery method below
@@ -49,7 +49,7 @@ const CheckoutForm = () => {
             />
           </RadioGroup>
         </FormControl>
-      </Paper>
+      </Paper> */}
 
       {/* Delivery Address */}
       <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
@@ -109,7 +109,7 @@ const CheckoutForm = () => {
       </Paper>
 
       {/* Delivery Method */}
-      <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
+      {/* <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
           Delivery Method
         </Typography>
@@ -135,7 +135,7 @@ const CheckoutForm = () => {
             label="Saturday Delivery - Rs.6.00"
           />
         </RadioGroup>
-      </Paper>
+      </Paper> */}
 
       {/* Order Summary */}
       <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>

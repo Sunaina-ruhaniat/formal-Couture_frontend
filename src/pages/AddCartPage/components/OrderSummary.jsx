@@ -62,7 +62,7 @@ const OrderSummary = ({ subtotal }) => {
         <Typography>Delivery</Typography>
         <Typography>Rs.0</Typography>
       </Box>
-      <ShippingDropdown />
+      {/* <ShippingDropdown /> */}
       <Divider sx={{ my: 2 }} />
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6">TOTAL</Typography>

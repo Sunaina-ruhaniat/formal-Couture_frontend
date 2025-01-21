@@ -1,7 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Card, CardMedia, Box } from "@mui/material";
+import productStore from "stores/productStore";
+import { useNavigate } from "react-router-dom";
 
 const MostLovedStyles = () => {
+  const navigate = useNavigate();
+  const { productListByCategory, getProductByCategory } = productStore;
+  const category = "limited-edition";
+  useEffect(() => {
+    getProductByCategory(category);
+  }, []);
+  const BASE_URL = "http://localhost:8000";
+
+  const [hovered, setHovered] = useState(null);
+  const [hoveredText, setHoveredText] = useState(null); // State to track hover on text
+
+  // Dummy onClick function for "Add to Bag"
+  const handleAddToBagClick = () => {
+    console.log("Item added to the bag");
+  };
+
   const styles = [
     {
       image: "/assets/images/IMG_4809.JPG",
@@ -24,14 +42,6 @@ const MostLovedStyles = () => {
       price: "Rs.379",
     },
   ];
-
-  const [hovered, setHovered] = useState(null);
-  const [hoveredText, setHoveredText] = useState(null); // State to track hover on text
-
-  // Dummy onClick function for "Add to Bag"
-  const handleAddToBagClick = () => {
-    console.log("Item added to the bag");
-  };
 
   return (
     <div
@@ -64,97 +74,99 @@ const MostLovedStyles = () => {
           overflowX: "auto",
         }}
       >
-        {styles.map((style, index) => (
-          <div
-            key={index}
-            style={{
-              width: "calc(25% - 16px)",
-              minWidth: "250px",
-              position: "relative",
-            }}
-          >
-            <Card
-              elevation={0}
+        {productListByCategory[category] &&
+          productListByCategory[category]?.map((style, index) => (
+            <div
+              key={index}
               style={{
-                boxShadow: "none",
-                height: "auto",
+                width: "calc(25% - 16px)",
+                minWidth: "250px",
                 position: "relative",
               }}
-              onMouseEnter={() => setHovered(index)}
-              onMouseLeave={() => setHovered(null)}
             >
-              <CardMedia
-                component="img"
-                image={style.image}
-                alt={style.title}
+              <Card
+                elevation={0}
                 style={{
-                  width: "100%",
+                  boxShadow: "none",
                   height: "auto",
-                  objectFit: "cover",
-                  display: "block",
-                  borderRadius: "0px", // Border radius removed
+                  position: "relative",
                 }}
-              />
-              {hovered === index && (
-                <div
+                onClick={() => navigate(`/product-details/${style._id}`)}
+                onMouseEnter={() => setHovered(index)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <CardMedia
+                  component="img"
+                  image={`${BASE_URL}${style.images[0]}`}
+                  alt={style.name}
                   style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
                     width: "100%",
-                    backgroundColor: "rgba(255, 255, 255, 0.7)",
-                    padding: "10px 0",
-                    textAlign: "center",
+                    height: "auto",
+                    objectFit: "cover",
+                    display: "block",
+                    borderRadius: "0px", // Border radius removed
                   }}
-                >
+                />
+                {hovered === index && (
                   <div
-                    onClick={handleAddToBagClick} // Add the dummy onClick function
-                    onMouseEnter={() => setHoveredText(index)} // Change hover state
-                    onMouseLeave={() => setHoveredText(null)} // Revert hover state
                     style={{
-                      fontSize: "14px",
-                      fontFamily:
-                        "'Proxima Nova', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.50rem",
-                      lineHeight: "1rem",
-                      color: hoveredText === index ? "#fff" : "#333333", // Change color on hover
-                      fontWeight: "600",
-                      cursor: "pointer", // Indicate clickable text
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
+                      backgroundColor: "rgba(255, 255, 255, 0.7)",
+                      padding: "10px 0",
+                      textAlign: "center",
                     }}
                   >
-                    Add to Bag
+                    <div
+                      onClick={handleAddToBagClick} // Add the dummy onClick function
+                      onMouseEnter={() => setHoveredText(index)} // Change hover state
+                      onMouseLeave={() => setHoveredText(null)} // Revert hover state
+                      style={{
+                        fontSize: "14px",
+                        fontFamily:
+                          "'Proxima Nova', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.50rem",
+                        lineHeight: "1rem",
+                        color: hoveredText === index ? "#fff" : "#333333", // Change color on hover
+                        fontWeight: "600",
+                        cursor: "pointer", // Indicate clickable text
+                      }}
+                    >
+                      Add to Bag
+                    </div>
                   </div>
-                </div>
-              )}
-            </Card>
-            <div style={{ textAlign: "left", paddingTop: "10px" }}>
-              <Typography
-                variant="h6"
-                style={{
-                  fontSize: "16px",
-                  fontFamily: "'Proxima Nova', sans-serif",
-                  letterSpacing: "1.2px",
-                }}
-              >
-                {style.title}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{
-                  fontSize: "16px",
-                  fontFamily: "'Proxima Nova', sans-serif",
-                  marginTop: "6px",
-                  color: "#333333",
-                  fontWeight: "600",
-                  letterSpacing: "1px",
-                }}
-              >
-                {style.price}
-              </Typography>
+                )}
+              </Card>
+              <div style={{ textAlign: "left", paddingTop: "10px" }}>
+                <Typography
+                  variant="h6"
+                  style={{
+                    fontSize: "16px",
+                    fontFamily: "'Proxima Nova', sans-serif",
+                    letterSpacing: "1.2px",
+                  }}
+                >
+                  {style.name}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  style={{
+                    fontSize: "16px",
+                    fontFamily: "'Proxima Nova', sans-serif",
+                    marginTop: "6px",
+                    color: "#333333",
+                    fontWeight: "600",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  {style.price}
+                </Typography>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </Box>
     </div>
   );
