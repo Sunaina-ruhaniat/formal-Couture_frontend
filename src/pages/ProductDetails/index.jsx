@@ -260,8 +260,6 @@ const ProductPage = () => {
                 ADD TO WISHLIST
               </Button>
             </Box>
-
-            <GenerateReferralCode />
           </Grid>
         </Grid>
       </Box>

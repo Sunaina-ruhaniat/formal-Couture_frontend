@@ -23,7 +23,7 @@ const GenerateReferralCode = () => {
 
   const generateReferralCode = () => {
     referralCodeStore
-      .generateReferralCode(product.productCode)
+      .generateReferralCode()
       .then((code) => {
         setReferralCode(code);
         setSnackbarMessage("Referral Code Generated!");

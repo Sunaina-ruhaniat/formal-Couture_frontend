@@ -19,6 +19,7 @@ import {
   Lock,
   AccessTime,
 } from "@mui/icons-material"; // Import icons
+import GenerateReferralCode from "pages/ProductDetails/components/GenerateReferralCode";
 
 const Profile = () => {
   const [user, setUser] = useState(null); // State to store user data
@@ -167,6 +168,7 @@ const Profile = () => {
                 </Button>
               </Box>
             </Grid>
+            <GenerateReferralCode />
           </Grid>
         ) : (
           <Typography variant="h5">Loading user data...</Typography>
