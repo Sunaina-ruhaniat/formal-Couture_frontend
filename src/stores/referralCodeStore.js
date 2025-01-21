@@ -20,18 +20,13 @@ class ReferralCodeStore {
     });
   }
 
-  generateReferralCode = async (targetEntity) => {
+  generateReferralCode = async () => {
     runInAction(() => {
       this.isLoadingReferral = true;
     });
 
     try {
-      if (!targetEntity) {
-        throw new Error("Invalid target entity");
-      }
-      const { data } = await referralAxios.post("referral/generate-referral", {
-        targetEntity,
-      });
+      const { data } = await referralAxios.post("referral/generate-referral");
       runInAction(() => {
         this.referralCode = data.referral.linkId;
         this.isLoadingReferral = false;

@@ -10,22 +10,23 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PartywearPage from "pages/HomePage/components/PartyWear";
-import { observer } from "mobx-react"; // Import observer after installing mobx-react
-import productStore from "stores/productStore"; // Import the productStore
+import { observer } from "mobx-react";
+import productStore from "stores/productStore";
 
-const BASE_URL = "http://localhost:8000"; // Adjust to your server's base URL
+const BASE_URL = "http://localhost:8000";
 
 const ProductListing = observer(() => {
   const navigate = useNavigate();
   const { getProductList, productList } = productStore;
-  const [loading, setLoading] = useState(true); // Loading state for images
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProductList(); // Fetch product list when the component mounts
+    getProductList();
   }, [getProductList]);
 
   const handleImageLoad = () => {
-    setLoading(false); // Set loading to false when image is loaded
+    setLoading(false);
   };
 
   return (
@@ -34,7 +35,7 @@ const ProductListing = observer(() => {
       <div style={{ padding: "20px", marginLeft: "120px" }}>
         <Grid container spacing={3}>
           {productList && productList.length > 0 ? (
-            productList.map((product) => (
+            productList.map((product, index) => (
               <Grid item xs={12} sm={6} md={4} key={product._id}>
                 <Card
                   elevation={0}
@@ -46,17 +47,17 @@ const ProductListing = observer(() => {
                     height: "600px",
                   }}
                   className="product-card"
-                  onClick={() => navigate(`/product-details/${product._id}`)} // Navigate to product details page
+                  onClick={() => navigate(`/product-details/${product._id}`)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  {/* Product Image */}
                   <div
                     style={{
                       position: "relative",
                       width: "100%",
-                      paddingBottom: "150%", // Maintain aspect ratio
+                      paddingBottom: "150%",
                     }}
                   >
-                    {/* Show loader while image is loading */}
                     {loading && (
                       <div
                         style={{
@@ -72,10 +73,14 @@ const ProductListing = observer(() => {
 
                     <CardMedia
                       component="img"
-                      image={`${BASE_URL}${product.images[0]}`} // Prepend base URL to the image path
-                      alt={product.name}
+                      image={
+                        hoveredIndex === index && product.images[1]
+                          ? `${BASE_URL}${product.images[1]}`
+                          : `${BASE_URL}${product.images[0]}`
+                      }
+                      alt={product.name || "Product Image"}
                       className="primary-image"
-                      onLoad={handleImageLoad} // Set loading to false when the image loads
+                      onLoad={handleImageLoad}
                     />
                     <div className="hover-text">
                       <Typography variant="body1">Quick View</Typography>
@@ -95,7 +100,7 @@ const ProductListing = observer(() => {
                     align="center"
                     style={{ fontWeight: 400 }}
                   >
-                    ${product.price} {/* Display product price */}
+                    ${product.price}
                   </Typography>
                 </CardContent>
               </Grid>
