@@ -8,6 +8,7 @@ import PublicRoute from "core/PublicRoute";
 import LinearProgress from "@mui/material/LinearProgress";
 import Layout from "components/Layout";
 import SignupPage from "pages/SignUpPage";
+import AdminRoute from "./AdminRoute";
 
 const LoginPage = lazy(() => import("pages/LoginPage"));
 const HomePage = lazy(() => import("pages/HomePage"));
@@ -30,6 +31,12 @@ const CheckoutFormPage = lazy(() =>
 );
 const PaymentPage = lazy(() =>
   import("pages/AddCartPage/components/PaymentPage")
+);
+const AdminDashboardPage = lazy(() => import("pages/Admin/DashboardPage"));
+const AdminProductPage = lazy(() => import("pages/Admin/ProductPage"));
+const AdminOrderPage = lazy(() => import("pages/Admin/OrderPage"));
+const OrderDetails = lazy(() =>
+  import("pages/Admin/OrderPage/components/OrderDetailPage")
 );
 
 const publicRoutes = [
@@ -97,34 +104,62 @@ const privateRoutes = [
     Component: <AddToCartPage />,
   },
 ];
-
+const adminRoutes = [
+  {
+    path: privatePaths.admin.page,
+    Component: <AdminDashboardPage />,
+  },
+  {
+    path: privatePaths.admin.productPage,
+    Component: <AdminProductPage />,
+  },
+  {
+    path: privatePaths.admin.orders,
+    Component: <AdminOrderPage />,
+  },
+];
+console.log(
+  "adminRoutes.map((route) => (",
+  adminRoutes.map((route) => route)
+);
 const App = () => {
   const isAuthenticated = localStorage.getItem("userId");
+  const userRole = localStorage.getItem("role");
 
   return (
     <Suspense fallback={<LinearProgress />}>
       <Routes>
         <Route path="/" element={<Layout />}>
-          {publicRoutes.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<PublicRoute>{route.Component}</PublicRoute>}
-            />
-          ))}
+          {userRole !== "admin" &&
+            publicRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<PublicRoute>{route.Component}</PublicRoute>}
+              />
+            ))}
 
-          {privateRoutes.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  {route.Component}
-                </PrivateRoute>
-              }
-            />
-          ))}
+          {userRole === "customer" &&
+            privateRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  <PrivateRoute isAuthenticated={isAuthenticated}>
+                    {route.Component}
+                  </PrivateRoute>
+                }
+              />
+            ))}
 
+          {userRole === "admin" &&
+            adminRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<AdminRoute>{route.Component}</AdminRoute>}
+              />
+            ))}
           <Route
             path="*"
             element={<Navigate to={publicPaths.home} replace />}

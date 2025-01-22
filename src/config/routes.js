@@ -1,7 +1,10 @@
 export const defaultPath = "/home";
 export const privatePaths = {
   admin: {
-    page: "/main-page",
+    page: "/admin-page",
+    productPage: "/admin/products",
+    orders: "/admin/orders",
+    orderDetails: "/admin/orders/:orderId",
   },
   customer: {
     profile: "/profile",
