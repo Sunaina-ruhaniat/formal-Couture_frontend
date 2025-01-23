@@ -25,7 +25,7 @@ class CartStore {
   }
 
   // Add to Cart function
-  addToCart = async (productId, quantity, variant, navigate) => {
+  addToCart = async (productId, quantity, variant, navigate, isUpdate = false) => {
     const url = this.userId ? "/cart/add-to-cart" : "/cart/guest/add-to-cart";
     try {
       const response = await axios.post(url, {
@@ -34,7 +34,13 @@ class CartStore {
         variant,
       });
       if (response.status === 200) {
-        this.cart.push(response.data);
+        console.log('this.cart', JSON.stringify(this.cart));
+        // if (isUpdate) {
+          console.log('hey', response.data)
+          this.cart = response.data.cart;
+        // } else {
+        //   this.cart.push(response.data);
+        // } 
         toast.success(response.data.message);
         navigate("/shoppingBag");
       }
@@ -104,7 +110,7 @@ class CartStore {
     if (this.cart && this.cart.products && Array.isArray(this.cart.products)) {
       return this.cart.products.reduce((total, item) => {
         if (item.price && item.quantity) {
-          return total + item.price * item.quantity;
+          return total + item.price;
         }
         return total;
       }, 0);
@@ -113,7 +119,7 @@ class CartStore {
   };
 
   // Remove item from cart
-  removeFromCart = async (productId, quantity, variant) => {
+  removeFromCart = async (productId, quantity, variant, isUpdate) => {
     const url = this.token
       ? "/cart/remove-from-cart"
       : "/cart/guest/remove-from-cart";
@@ -127,12 +133,7 @@ class CartStore {
 
       if (response.status === 200) {
         // This line ensures that the item is removed from the cart after successful removal.
-        this.cart = this.cart.filter((item) => {
-          return (
-            item.productId !== productId ||
-            JSON.stringify(item.variant) !== JSON.stringify(variant)
-          );
-        });
+        this.cart = response.data.cart
 
         // You can also use a toast to notify the user that the item was removed
         toast.success("Item removed from cart!");

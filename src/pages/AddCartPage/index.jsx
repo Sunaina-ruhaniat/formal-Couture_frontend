@@ -66,6 +66,17 @@ const ShoppingCart = observer(() => {
 
   const handleQuantityChange = (event, item) => {
     const newQuantity = event.target.value;
+    console.log(JSON.stringify(item.quantity), JSON.stringify(item))
+    const change = newQuantity -  item.quantity
+    if (change < 0) {
+      cartStore.removeFromCart(item.product._id, Math.abs(change),item.variant, true )
+
+      // alert('its removal');
+    }
+    if (change > 0) {
+      cartStore.addToCart(item.product._id, change,item.variant, true )
+      // alert('its addition')
+    }
     // cartStore.updateQuantity(item.product._id, newQuantity, item.variant);
   };
 
@@ -219,7 +230,7 @@ const ShoppingCart = observer(() => {
                           Quantity
                         </Typography>
                         <Select
-                          value={item.quantity}
+                          value={item.quantity }
                           onChange={(event) =>
                             handleQuantityChange(event, item)
                           }
@@ -238,7 +249,7 @@ const ShoppingCart = observer(() => {
                             },
                           }}
                         >
-                          {[1, 2, 3, 4, 5].map((num) => (
+                          {Array.from({length: item.product.stock}, (_, i) => i + 1).map((num) => (
                             <MenuItem key={num} value={num}>
                               {num}
                             </MenuItem>
