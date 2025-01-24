@@ -38,6 +38,7 @@ const AdminOrderPage = lazy(() => import("pages/Admin/OrderPage"));
 const OrderDetails = lazy(() =>
   import("pages/Admin/OrderPage/components/OrderDetailPage")
 );
+const AdminProfilePage = lazy(() => import("pages/Admin/AdminProfile"));
 
 const publicRoutes = [
   {
@@ -106,6 +107,10 @@ const privateRoutes = [
 ];
 const adminRoutes = [
   {
+    path: privatePaths.admin.adminProfile,
+    Component: <AdminProfilePage />,
+  },
+  {
     path: privatePaths.admin.page,
     Component: <AdminDashboardPage />,
   },
@@ -117,54 +122,52 @@ const adminRoutes = [
     path: privatePaths.admin.orders,
     Component: <AdminOrderPage />,
   },
+  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
 ];
-console.log(
-  "adminRoutes.map((route) => (",
-  adminRoutes.map((route) => route)
-);
+
 const App = () => {
-  const isAuthenticated = localStorage.getItem("userId");
-  const userRole = localStorage.getItem("role");
+  const role = localStorage.getItem("role");
 
   return (
     <Suspense fallback={<LinearProgress />}>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          {userRole !== "admin" &&
-            publicRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={<PublicRoute>{route.Component}</PublicRoute>}
-              />
-            ))}
+        {publicRoutes.map((route) => (
+          <Route
+            key={route.path + Date.now()}
+            path={route.path}
+            element={<PublicRoute>{route.Component}</PublicRoute>}
+          />
+        ))}
 
-          {userRole === "customer" &&
-            privateRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  <PrivateRoute isAuthenticated={isAuthenticated}>
-                    {route.Component}
-                  </PrivateRoute>
-                }
-              />
-            ))}
-
-          {userRole === "admin" &&
-            adminRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={<AdminRoute>{route.Component}</AdminRoute>}
-              />
-            ))}
+        {role && privateRoutes[role] ? (
+          privateRoutes[role].map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<PrivateRoute>{route.Component}</PrivateRoute>}
+            />
+          ))
+        ) : (
           <Route
             path="*"
-            element={<Navigate to={publicPaths.home} replace />}
+            element={<Navigate to={publicPaths.login} replace />}
           />
-        </Route>
+        )}
+
+        {role === "admin" &&
+          adminRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<AdminRoute>{route.Component}</AdminRoute>}
+            />
+          ))}
+        <Route path="*" element={<Navigate to={publicPaths.home} replace />} />
+        <Route
+          exact
+          path="/"
+          element={<Navigate to={publicPaths.home} replace />}
+        />
       </Routes>
     </Suspense>
   );

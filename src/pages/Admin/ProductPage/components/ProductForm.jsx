@@ -10,10 +10,12 @@ import {
   CircularProgress,
   IconButton,
   Box,
+  Typography,
+  Divider,
 } from "@mui/material";
 import toast from "react-hot-toast";
-import axios from "axios";
-import DeleteIcon from "@mui/icons-material/Delete"; // For remove image button
+import DeleteIcon from "@mui/icons-material/Delete";
+import productStore from "stores/productStore";
 
 const ProductForm = ({ product, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -26,6 +28,7 @@ const ProductForm = ({ product, onClose, onSave }) => {
     sizes: [],
     colors: [],
     fits: [],
+    productCode: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +45,7 @@ const ProductForm = ({ product, onClose, onSave }) => {
         sizes: Array.isArray(product.sizes) ? product.sizes : [],
         colors: Array.isArray(product.colors) ? product.colors : [],
         fits: Array.isArray(product.fits) ? product.fits : [],
+        productCode: product.productCode || "",
       });
     }
   }, [product]);
@@ -81,54 +85,43 @@ const ProductForm = ({ product, onClose, onSave }) => {
       formDataToSend.append("sizes", JSON.stringify(formData.sizes));
       formDataToSend.append("colors", JSON.stringify(formData.colors));
       formDataToSend.append("fits", JSON.stringify(formData.fits));
+      formDataToSend.append("productCode", formData.productCode);
 
-      // Append images
       formData.images.forEach((image) => {
         formDataToSend.append("images", image);
       });
 
-      if (product) {
-        // Update Product
-        await axios.put(
-          `http://localhost:8000/api/product/update-product/${product._id}`,
-          formDataToSend,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        toast.success("Product updated successfully!");
+      if (product._id) {
+        await productStore.updateProduct(product._id, formDataToSend);
+        onSave();
+        onClose();
       } else {
-        // Create Product
-        await axios.post(
-          "http://localhost:8000/api/product/create-product",
-          formDataToSend,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        toast.success("Product created successfully!");
+        await productStore.createProduct(formDataToSend);
+        onSave();
+        onClose();
       }
-      onSave(); // Notify parent to refresh the list
-      onClose(); // Close the form
     } catch (error) {
-      toast.error("An error occurred while saving the product");
+      toast.error("An error occurred while saving the product.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={Boolean(product)} onClose={onClose}>
-      <DialogTitle>{product ? "Edit Product" : "Add New Product"}</DialogTitle>
+    <Dialog open={Boolean(product)} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        <Typography
+          variant="h6"
+          color="textPrimary"
+          fontWeight="600"
+          sx={{ marginTop: "10px" }}
+        >
+          {product._id ? "Edit Product" : "Add New Product"}
+        </Typography>
+      </DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
-          {/* First Row: Name, Price */}
+        <Grid container spacing={3} sx={{ marginTop: "6px" }}>
+          {/* Product Name */}
           <Grid item xs={12} sm={6}>
             <TextField
               label="Product Name"
@@ -139,6 +132,8 @@ const ProductForm = ({ product, onClose, onSave }) => {
               onChange={handleChange}
             />
           </Grid>
+
+          {/* Product Price */}
           <Grid item xs={12} sm={6}>
             <TextField
               label="Price"
@@ -147,20 +142,11 @@ const ProductForm = ({ product, onClose, onSave }) => {
               name="price"
               value={formData.price}
               onChange={handleChange}
+              type="number"
             />
           </Grid>
 
-          {/* Second Row: Description, Category */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Description"
-              variant="outlined"
-              fullWidth
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </Grid>
+          {/* Product Category */}
           <Grid item xs={12} sm={6}>
             <TextField
               label="Category"
@@ -172,8 +158,8 @@ const ProductForm = ({ product, onClose, onSave }) => {
             />
           </Grid>
 
-          {/* Third Row: Stock, Sizes, Colors */}
-          <Grid item xs={12} sm={4}>
+          {/* Product Stock */}
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Stock"
               variant="outlined"
@@ -181,9 +167,12 @@ const ProductForm = ({ product, onClose, onSave }) => {
               name="stock"
               value={formData.stock}
               onChange={handleChange}
+              type="number"
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+
+          {/* Sizes */}
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Sizes (comma separated)"
               variant="outlined"
@@ -197,7 +186,9 @@ const ProductForm = ({ product, onClose, onSave }) => {
               }
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+
+          {/* Colors */}
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Colors (comma separated)"
               variant="outlined"
@@ -212,8 +203,8 @@ const ProductForm = ({ product, onClose, onSave }) => {
             />
           </Grid>
 
-          {/* Fourth Row: Fits */}
-          <Grid item xs={12}>
+          {/* Fits */}
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Fits (comma separated)"
               variant="outlined"
@@ -228,6 +219,32 @@ const ProductForm = ({ product, onClose, onSave }) => {
             />
           </Grid>
 
+          {/* Product Code */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Product Code"
+              variant="outlined"
+              fullWidth
+              name="productCode"
+              value={formData.productCode}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          {/* Product Description */}
+          <Grid item xs={12}>
+            <TextField
+              label="Description"
+              variant="outlined"
+              fullWidth
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              multiline
+              rows={3}
+            />
+          </Grid>
+
           {/* Image Upload */}
           <Grid item xs={12}>
             <input
@@ -235,12 +252,23 @@ const ProductForm = ({ product, onClose, onSave }) => {
               accept="image/*"
               multiple
               onChange={handleImageChange}
+              style={{
+                marginBottom: "10px",
+                border: "1px solid #ccc",
+                padding: "5px",
+              }}
             />
             <Box mt={2}>
               {formData.images.length > 0 &&
                 formData.images.map((image, idx) => (
-                  <Box key={idx} display="flex" alignItems="center" mb={1}>
-                    <span>{image.name}</span>
+                  <Box
+                    key={idx}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={1}
+                  >
+                    <Typography variant="body2">{image.name}</Typography>
                     <IconButton
                       color="secondary"
                       onClick={() => handleImageRemove(image.name)}
@@ -254,10 +282,15 @@ const ProductForm = ({ product, onClose, onSave }) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color="secondary" variant="outlined">
           Cancel
         </Button>
-        <Button onClick={handleSave} color="primary" disabled={isLoading}>
+        <Button
+          onClick={handleSave}
+          color="primary"
+          disabled={isLoading}
+          variant="contained"
+        >
           {isLoading ? <CircularProgress size={24} /> : "Save"}
         </Button>
       </DialogActions>

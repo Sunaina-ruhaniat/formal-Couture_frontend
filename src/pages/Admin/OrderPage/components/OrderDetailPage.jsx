@@ -2,89 +2,204 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import {
   CircularProgress,
+  Typography,
   Card,
   CardContent,
-  Typography,
-  Grid,
+  Divider,
   Button,
+  Grid,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import "../styles.css";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import orderStore from "stores/orderStore"; // Adjust path if necessary
 
-const OrderDetailPage = observer(() => {
-  const { orderId } = useParams();
+const OrderDetailsPage = observer(() => {
+  const { orderId } = useParams(); // Get orderId from URL
+  const navigate = useNavigate();
 
   useEffect(() => {
-    orderStore.getOrderById(orderId); // Fetch order details when page loads
+    orderStore.getOrderById(orderId); // Fetch order details using orderId
   }, [orderId]);
 
   if (orderStore.isLoading) {
-    return <CircularProgress />;
+    return (
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
-  const order = orderStore.selectedOrder;
-
-  if (!order) {
-    return <Typography variant="h6">Order not found.</Typography>;
+  if (!orderStore.selectedOrder) {
+    return (
+      <Typography variant="h6" align="center" style={{ marginTop: "50px" }}>
+        Order not found.
+      </Typography>
+    );
   }
+
+  const { selectedOrder } = orderStore;
+  const { shippingAddress, billingAddress } = selectedOrder;
 
   return (
-    <div className="admin-container">
-      {/* Sidebar */}
+    <div style={{ display: "flex" }}>
       <div className="sidebar">
-        <Typography variant="h6">Admin Panel</Typography>
+        <Typography variant="h6" color="textPrimary" sx={{ marginBottom: 3 }}>
+          Browse by
+        </Typography>
+        <Divider sx={{ marginTop: "10px", width: "200px" }} />
         <Link to="/admin-page">Dashboard</Link>
         <Link to="/admin/products">Products</Link>
         <Link to="/admin/orders">Orders</Link>
       </div>
 
       {/* Main Content */}
-      <div className="main-content">
-        <Typography variant="h4" className="font-semibold mb-8 text-gray-800">
-          Order #{order._id}
+      <div
+        style={{
+          flex: 1,
+          padding: "20px",
+          marginLeft: "100px",
+          marginTop: "20px",
+        }}
+      >
+        <Typography variant="h4" gutterBottom style={{ fontWeight: "bold" }}>
+          Order #{selectedOrder._id}
         </Typography>
 
-        <Card className="bg-white shadow-xl rounded-lg p-6">
+        <Card
+          style={{
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            borderRadius: "12px",
+            marginTop: "60px",
+          }}
+        >
           <CardContent>
-            <Typography variant="h6" className="text-gray-500 mb-2">
-              Customer: {order.customerName}
+            <Typography
+              variant="h6"
+              color="black"
+              style={{ fontWeight: "600" }}
+            >
+              Customer Information
             </Typography>
-            <Typography variant="h6" className="text-gray-500 mb-2">
-              Status: {order.status}
+            <Typography variant="body1" color="textSecondary">
+              Name: {selectedOrder.user.name}
             </Typography>
-            <Typography variant="h6" className="text-gray-500 mb-2">
-              Total Amount: ${order.totalAmount}
+            <Typography variant="body1" color="textSecondary">
+              Email: {selectedOrder.user.email}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Phone: {selectedOrder.user.phone}
             </Typography>
 
-            <Typography variant="h6" className="text-gray-500 mb-2">
-              Items:
+            <Divider sx={{ marginY: "15px" }} />
+
+            <Typography
+              variant="h6"
+              color="black"
+              style={{ fontWeight: "600" }}
+            >
+              Order Details
             </Typography>
-            <Grid container spacing={2}>
-              {order.items.map((item, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card className="bg-white shadow-md">
-                    <CardContent>
-                      <Typography variant="body1">
-                        {item.productName}
-                      </Typography>
-                      <Typography variant="body2">
-                        Quantity: {item.quantity}
-                      </Typography>
-                      <Typography variant="body2">
-                        Price: ${item.price}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+            <Typography variant="body1" color="textSecondary">
+              Status: {selectedOrder.status}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Payment Status: {selectedOrder.paymentStatus}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Total Amount: ${selectedOrder.totalAmount}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Final Amount: ${selectedOrder.finalAmount}
+            </Typography>
+
+            <Divider sx={{ marginY: "15px" }} />
+
+            {/* Address Section with Grid */}
+            <Grid container spacing={3}>
+              {/* Shipping Address */}
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  color="black"
+                  style={{ fontWeight: "600" }}
+                >
+                  Shipping Address:
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {shippingAddress.name}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {shippingAddress.phone}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {shippingAddress.addressLine1}, {shippingAddress.addressLine2}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {shippingAddress.city}, {shippingAddress.state},{" "}
+                  {shippingAddress.country} - {shippingAddress.zipCode}
+                </Typography>
+              </Grid>
+
+              {/* Billing Address */}
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  color="black"
+                  style={{ fontWeight: "600" }}
+                >
+                  Billing Address:
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {billingAddress.name}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {billingAddress.phone}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {billingAddress.addressLine1}, {billingAddress.addressLine2}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {billingAddress.city}, {billingAddress.state},{" "}
+                  {billingAddress.country} - {billingAddress.zipCode}
+                </Typography>
+              </Grid>
             </Grid>
+
+            <Divider sx={{ marginY: "15px" }} />
+
+            {/* Product Details */}
+            <Typography
+              variant="h6"
+              color="black"
+              style={{ fontWeight: "600" }}
+            >
+              Products:
+            </Typography>
+            {selectedOrder.products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body1" color="textSecondary">
+                  {product.name} - ${product.price} x {product.quantity}
+                </Typography>
+              </div>
+            ))}
 
             <Button
               variant="contained"
               color="primary"
-              component={Link}
-              to="/admin/orders"
-              style={{ marginTop: "20px" }}
+              onClick={() => navigate("/admin/orders")}
+              style={{
+                marginTop: "60px",
+                borderRadius: "8px",
+                backgroundColor: "#000",
+                "&:hover": {
+                  backgroundColor: "#fff",
+                  color: "black",
+                  border: "1px solid black",
+                },
+                fontWeight: "600",
+              }}
             >
               Back to Orders
             </Button>
@@ -95,4 +210,4 @@ const OrderDetailPage = observer(() => {
   );
 });
 
-export default OrderDetailPage;
+export default OrderDetailsPage;

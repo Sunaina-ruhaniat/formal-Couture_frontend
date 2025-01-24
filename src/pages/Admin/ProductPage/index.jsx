@@ -24,11 +24,11 @@ const AdminProductPage = observer(() => {
   }, []);
 
   const handleEdit = (product) => {
-    setEditingProduct(product); // Open the edit modal or form with selected product
+    setEditingProduct(product);
   };
 
   const handleDelete = async (productId) => {
-    await productStore.deleteProduct(productId); // Call delete method from productStore
+    await productStore.deleteProduct(productId);
   };
 
   if (productStore.isLoading) {
@@ -46,8 +46,23 @@ const AdminProductPage = observer(() => {
       </div>
 
       {/* Product List */}
-      <div style={{ padding: "20px", marginLeft: "120px" }}>
-        <Typography variant="h4" className="font-semibold mb-8 text-gray-800">
+      <div
+        style={{
+          flex: 1,
+          padding: "20px",
+          marginLeft: "100px",
+          marginTop: "20px",
+        }}
+      >
+        <Typography
+          variant="h4"
+          style={{
+            fontWeight: "bold",
+            color: "#2C3E50",
+            marginBottom: "30px",
+            fontSize: "32px",
+          }}
+        >
           Admin Product Page
         </Typography>
 
@@ -56,37 +71,140 @@ const AdminProductPage = observer(() => {
           variant="contained"
           color="primary"
           onClick={() => setEditingProduct({})}
+          style={{
+            marginBottom: "20px",
+            padding: "10px 20px",
+            width: "30rem",
+            fontSize: "16px",
+            borderRadius: "8px",
+            backgroundColor: "#000",
+            "&:hover": {
+              backgroundColor: "#fff",
+              color: "black",
+              border: "1px solid black",
+            },
+          }}
         >
           Add New Product
         </Button>
-        <Grid container spacing={4} style={{ marginTop: "20px" }}>
+
+        <Grid container spacing={4} justifyContent="center">
           {productStore.productsData && productStore.productsData.length > 0 ? (
             productStore.productsData.map((product) => (
-              <Grid item xs={12} sm={6} md={3} key={product._id}>
-                <Card className="bg-white shadow-xl rounded-lg p-6">
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                key={product._id}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Card
+                  className="bg-white shadow-xl rounded-lg"
+                  style={{
+                    width: "100%",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow
+                    borderRadius: "10px", // Rounded corners for the card
+                  }}
+                >
                   <CardContent>
-                    <Typography variant="h6" className="text-gray-500 mb-2">
+                    <Typography
+                      variant="h6"
+                      style={{
+                        color: "#333", // Darker color for better readability
+                        marginBottom: "10px",
+                        fontWeight: "600",
+                      }}
+                    >
                       {product.name}
                     </Typography>
-                    <Typography variant="body2" className="text-gray-700">
-                      ${product.price}
+                    <Typography
+                      variant="body2"
+                      style={{
+                        color: "#666",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      Rs.{product.price}
                     </Typography>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleEdit(product)}
-                      style={{ marginTop: "10px" }}
+
+                    {/* Edit and Delete Buttons */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => handleDelete(product._id)}
-                      style={{ marginTop: "10px", marginLeft: "10px" }}
-                    >
-                      Delete
-                    </Button>
+                      {/* <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                          width: "45%",
+                          padding: "15px",
+                          fontSize: "16px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fff",
+                          color: "black",
+                          "&:hover": {
+                            backgroundColor: "#000",
+                            color: "white",
+                          },
+                        }}
+                        onClick={() => handleEdit(product)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        fullWidth
+                        sx={{
+                          width: "45%",
+                          padding: "15px",
+                          fontSize: "16px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fff",
+                          color: "black",
+                          "&:hover": {
+                            backgroundColor: "#000",
+                            color: "white",
+                          },
+                        }}
+                        onClick={() => handleDelete(product._id)}
+                      >
+                        Delete
+                      </Button> */}
+
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleEdit(product)}
+                        style={{
+                          marginTop: "10px",
+                          width: "45%",
+                          padding: "8px",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => handleDelete(product._id)}
+                        style={{
+                          marginTop: "10px",
+                          width: "45%",
+                          padding: "8px",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </Grid>

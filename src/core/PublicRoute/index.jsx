@@ -1,18 +1,20 @@
 import { Navigate } from "react-router-dom";
-import { privatePaths } from "config/routes";
+import { privatePaths } from "config/routes"; // Import privatePaths
+import Layout from "components/Layout";
 
 const PublicRoute = ({ children }) => {
-  if (localStorage.getItem("user") && localStorage.getItem("role")) {
-    const role = localStorage.getItem("role");
-    return (
-      <Navigate
-        to={privatePaths[role][Object.keys(privatePaths[role])[0]]}
-        replace
-      />
-    );
-  }
+  // const role = localStorage.getItem("role");
 
-  return children;
+  // if (role) {
+  //   return (
+  //     <Navigate
+  //       to={privatePaths[role][Object.keys(privatePaths[role])[0]]}
+  //       replace
+  //     />
+  //   );
+  // }
+
+  return <Layout>{children}</Layout>;
 };
 
 export default PublicRoute;

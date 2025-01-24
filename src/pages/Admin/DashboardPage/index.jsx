@@ -10,11 +10,12 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { observer } from "mobx-react";
 import "./styles.css";
 import ProductForm from "../ProductPage/components/ProductForm";
 import productStore from "stores/productStore";
+import userStore from "stores/userStore";
+import orderStore from "stores/orderStore";
 
 const AdminDashboard = observer(() => {
   const [addProduct, setAddProduct] = useState(null);
@@ -25,16 +26,29 @@ const AdminDashboard = observer(() => {
     totalOrders: 0,
     totalRevenue: 0,
   });
-
+  const [recentOrders, setRecentOrders] = useState([]);
   const navigate = useNavigate();
 
-  // Fetching the overview stats (this could be fetched from an API)
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/api/admin/stats"); // Example API endpoint for stats
-        setStats(response.data); // Assuming response.data has the stats
+
+        await userStore.getUser();
+        const totalUsers = userStore.user ? 1 : 0;
+
+        const productsResponse = await productStore.getProductList();
+        const totalProducts = productStore?.productList.length || 0;
+
+        const ordersResponse = await orderStore.getAllOrders();
+        const totalOrders = orderStore?.orders?.length || 0;
+
+        setStats({
+          totalUsers: totalUsers,
+          totalProducts: totalProducts,
+          totalOrders: totalOrders,
+          totalRevenue: 0,
+        });
       } catch (error) {
         console.error("Error fetching admin stats:", error);
       } finally {
@@ -48,118 +62,155 @@ const AdminDashboard = observer(() => {
   return (
     <div className="container">
       <div className="sidebar">
-        <Typography variant="h6">Browse by</Typography>
+        <Typography variant="h6" color="textPrimary" sx={{ marginBottom: 3 }}>
+          Browse by
+        </Typography>
         <Divider sx={{ marginTop: "10px", width: "200px" }} />
         <Link to="/admin-page">Dashboard</Link>
         <Link to="/admin/products">Products</Link>
         <Link to="/admin/orders">Orders</Link>
       </div>
 
-      {/* Main Content (Right) */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          backgroundColor: "#fff",
+      <div
+        style={{
+          flex: 1,
           padding: "20px",
+          marginLeft: "100px",
+          marginTop: "20px",
         }}
       >
-        <Typography variant="h4" gutterBottom>
+        <Typography
+          variant="h4"
+          style={{
+            fontWeight: "bold",
+            color: "#2C3E50",
+            marginBottom: "30px",
+            fontSize: "32px",
+          }}
+        >
           Admin Dashboard
         </Typography>
 
         {loading ? (
-          <CircularProgress />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "60vh",
+            }}
+          >
+            <CircularProgress color="primary" size={60} />
+          </Box>
         ) : (
           <>
             <Grid container spacing={3}>
-              {/* Total Users Card */}
               <Grid item xs={12} sm={6} md={3}>
-                <Card>
+                <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
                     <Typography variant="h6" color="textSecondary">
                       Total Users
                     </Typography>
-                    <Typography variant="h4" color="primary">
+                    <Typography variant="h4" color="black">
                       {stats.totalUsers}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
-              {/* Total Products Card */}
               <Grid item xs={12} sm={6} md={3}>
-                <Card>
+                <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
                     <Typography variant="h6" color="textSecondary">
                       Total Products
                     </Typography>
-                    <Typography variant="h4" color="primary">
+                    <Typography variant="h4" color="black">
                       {stats.totalProducts}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
-              {/* Total Orders Card */}
               <Grid item xs={12} sm={6} md={3}>
-                <Card>
+                <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
                     <Typography variant="h6" color="textSecondary">
                       Total Orders
                     </Typography>
-                    <Typography variant="h4" color="primary">
+                    <Typography variant="h4" color="priblackmary">
                       {stats.totalOrders}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
-              {/* Total Revenue Card */}
               <Grid item xs={12} sm={6} md={3}>
-                <Card>
+                <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
                     <Typography variant="h6" color="textSecondary">
                       Total Revenue
                     </Typography>
-                    <Typography variant="h4" color="primary">
-                      ${stats.totalRevenue}
+                    <Typography variant="h4" color="black">
+                      Rs.{stats.totalRevenue}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
             </Grid>
 
-            {/* Recent Orders */}
             <Box mt={5}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom color="textPrimary">
                 Recent Orders
               </Typography>
               <Grid container spacing={3}>
-                {/* Example order list (this could be dynamic data) */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6">Order ID: 12345</Typography>
-                      <Typography variant="body2">
-                        Customer: John Doe
-                      </Typography>
-                      <Button
-                        onClick={() => navigate("/order-details/12345")}
-                        variant="outlined"
-                        sx={{ marginTop: "10px" }}
-                      >
-                        View Order
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                {/* Add more orders here */}
+                {recentOrders.length > 0 ? (
+                  recentOrders.map((order) => (
+                    <Grid item xs={12} sm={6} md={3} key={order._id}>
+                      <Card sx={{ boxShadow: 3 }}>
+                        <CardContent>
+                          <Typography variant="h6">
+                            Order ID: {order._id}
+                          </Typography>
+                          <Typography variant="body2">
+                            Total Amount: ${order.totalAmount}
+                          </Typography>
+                          <Button
+                            onClick={() =>
+                              navigate(`/order-details/${order._id}`)
+                            }
+                            variant="outlined"
+                            sx={{
+                              marginTop: "10px",
+                              borderColor: "primary.main",
+                              color: "primary.main",
+                              "&:hover": {
+                                backgroundColor: "primary.main",
+                                color: "white",
+                              },
+                            }}
+                          >
+                            View Order
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))
+                ) : (
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Card sx={{ boxShadow: 3 }}>
+                      <CardContent>
+                        <Typography variant="body1">
+                          No recent orders.
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
               </Grid>
             </Box>
 
-            {/* Quick Actions */}
             <Box mt={5}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom color="textPrimary">
                 Quick Actions
               </Typography>
               <Grid container spacing={3}>
@@ -168,6 +219,17 @@ const AdminDashboard = observer(() => {
                     variant="contained"
                     color="primary"
                     fullWidth
+                    sx={{
+                      padding: "15px",
+                      fontSize: "16px",
+                      borderRadius: "8px",
+                      backgroundColor: "#000",
+                      "&:hover": {
+                        backgroundColor: "#fff",
+                        color: "black",
+                        border: "1px solid black",
+                      },
+                    }}
                     onClick={() => setAddProduct({})}
                   >
                     Add Product
@@ -178,6 +240,17 @@ const AdminDashboard = observer(() => {
                     variant="contained"
                     color="secondary"
                     fullWidth
+                    sx={{
+                      padding: "15px",
+                      fontSize: "16px",
+                      borderRadius: "8px",
+                      backgroundColor: "#fff",
+                      color: "black",
+                      "&:hover": {
+                        backgroundColor: "#000",
+                        color: "white",
+                      },
+                    }}
                     onClick={() => navigate("/admin/orders")}
                   >
                     Manage Orders
@@ -187,12 +260,13 @@ const AdminDashboard = observer(() => {
             </Box>
           </>
         )}
-      </Box>
+      </div>
+
       {addProduct && (
         <ProductForm
           product={addProduct}
           onClose={() => setAddProduct(null)}
-          onSave={productStore.saveProduct} // Assuming you have a saveProduct method in the store
+          onSave={productStore.saveProduct}
         />
       )}
     </div>

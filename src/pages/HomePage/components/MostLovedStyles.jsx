@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const MostLovedStyles = () => {
   const navigate = useNavigate();
   const { productListByCategory, getProductByCategory } = productStore;
-  const category = "limited-edition";
+  const category = "evergreen-classic";
   useEffect(() => {
     getProductByCategory(category);
   }, []);

@@ -15,24 +15,32 @@ class productStore {
   searchedProductList = null;
   productListByCategory = {
     "limited-edition": [],
-    "evergreen-classic": []
+    "evergreen-classic": [],
   };
+
   constructor() {
     makeObservable(this, {
       isLoading: observable.ref,
       productList: observable.ref,
       selectedProduct: observable.ref,
       productListByCategory: observable,
+
       productsData: computed,
       productByCategoryData: computed,
+
       getProductList: action,
       getProductById: action,
-      getProductByCategory: action
+      getProductByCategory: action,
+      createProduct: action,
+      updateProduct: action,
+      deleteProduct: action,
     });
   }
+
   get productByCategoryData() {
     return this.productListByCategory;
   }
+
   get productsData() {
     return this.productList;
   }
@@ -64,8 +72,8 @@ class productStore {
   };
 
   /**
-   * 
-   * @param {'limited-edition' | 'evergreen-classic'} category 
+   *
+   * @param {'limited-edition' | 'evergreen-classic'} category
    */
 
   getProductByCategory = async (category) => {
@@ -75,7 +83,9 @@ class productStore {
     });
     let res = null;
     try {
-      res = await axios.get(`/product/get-products?category=${category}&limit=4`);
+      res = await axios.get(
+        `/product/get-products?category=${category}&limit=4`
+      );
       if (res.status === 200) {
         runInAction(() => {
           this.productListByCategory[category] = res.data.products;
@@ -94,6 +104,7 @@ class productStore {
       });
     }
   };
+
   getSearchedProductList = async (searchKeyword) => {
     runInAction(() => {
       this.searchedProductList = null;
@@ -145,6 +156,83 @@ class productStore {
         });
         toast("Error fetching the product");
       });
+  };
+
+  createProduct = async (formData) => {
+    try {
+      const response = await axios.post("/product/create-product", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast.success("Product created successfully!");
+      return response.data;
+    } catch (error) {
+      toast.error("An error occurred while creating the product.");
+      throw error;
+    }
+  };
+
+  updateProduct = async (productId, formData) => {
+    try {
+      const response = await axios.put(
+        `/product/update-product/${productId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      toast.success("Product updated successfully!");
+      return response.data;
+    } catch (error) {
+      toast.error("An error occurred while updating the product.");
+      throw error;
+    }
+  };
+
+  deleteProduct = async (productId) => {
+    runInAction(() => {
+      this.isLoading = true;
+    });
+
+    try {
+      const res = await axios.delete(`/product/delete-product/${productId}`);
+
+      if (res.status === 200) {
+        runInAction(() => {
+          this.productList = this.productList.filter(
+            (product) => product.id !== productId
+          );
+
+          if (this.searchedProductList) {
+            this.searchedProductList = this.searchedProductList.filter(
+              (product) => product.id !== productId
+            );
+          }
+
+          Object.keys(this.productListByCategory).forEach((category) => {
+            this.productListByCategory[category] = this.productListByCategory[
+              category
+            ].filter((product) => product.id !== productId);
+          });
+        });
+
+        toast.success("Product deleted successfully");
+        this.getProductList();
+      } else {
+        throw new Error("Error deleting product");
+      }
+    } catch (error) {
+      toast.error("Error deleting product");
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
   };
 }
 

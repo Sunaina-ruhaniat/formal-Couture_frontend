@@ -27,7 +27,7 @@ class AuthStore {
       });
       if (res.status === 200) {
         const data = res?.data;
-        localStorage.setItem("userData", JSON.stringify(res));
+        localStorage.setItem("user", JSON.stringify(data?.user));
         localStorage.setItem("token", data?.token);
         localStorage.setItem("userId", data?.user?._id);
         localStorage.setItem("role", data?.user?.role);
@@ -48,7 +48,6 @@ class AuthStore {
         withCredentials: true,
       });
       if (response.status === 200) {
-        console.log("response", response);
         toast.success("Registration successful!");
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("userId", response?.data?.user?._id);

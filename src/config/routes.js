@@ -5,6 +5,7 @@ export const privatePaths = {
     productPage: "/admin/products",
     orders: "/admin/orders",
     orderDetails: "/admin/orders/:orderId",
+    adminProfile: "/admin/profile",
   },
   customer: {
     profile: "/profile",

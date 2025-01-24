@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import AdminDashboard from "pages/Admin/DashboardPage";
 import AdminHeader from "pages/Admin/AdminHeader";
 
-const Layout = () => {
+const Layout = ({ children }) => {
   const userRole = localStorage.getItem("role");
 
   return (
@@ -45,7 +45,13 @@ const Layout = () => {
               borderTop: "none",
             }}
           ></Box>
-          <AdminDashboard />
+          <main
+            style={{
+              minHeight: "80vh",
+            }}
+          >
+            {children}
+          </main>
         </Box>
       ) : (
         <Box sx={{ minHeight: "100vh" }}>
@@ -101,7 +107,7 @@ const Layout = () => {
               minHeight: "80vh",
             }}
           >
-            <Outlet />
+            {children}
           </main>
           <footer
             style={{

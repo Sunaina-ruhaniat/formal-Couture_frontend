@@ -1,6 +1,5 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import axios from "config/axios";
-import { privatePaths } from "config/routes";
 import toast from "react-hot-toast";
 
 class UserStore {
@@ -10,26 +9,20 @@ class UserStore {
   constructor() {
     makeObservable(this, {
       user: observable.ref,
+      isLoadingUser: observable,
       getUser: action,
     });
   }
 
-  getUser = () => {
+  getUser = async () => {
     runInAction(() => {
       this.isLoadingUser = true;
     });
 
-    const csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
-    axios.defaults.headers.common["X-CSRFToken"] = csrfToken;
-
-    axios
-      .get("/auth/me", { withCredentials: true })
+    await axios
+      .get("/user/get-user")
       .then(({ data }) => {
         runInAction(() => {
-          const className = data?.groups[0]?.split(" ")[1];
-          if (className) {
-            localStorage.setItem("userClass", className);
-          }
           this.user = data;
           this.isLoadingUser = false;
         });
@@ -38,6 +31,7 @@ class UserStore {
         runInAction(() => {
           this.isLoadingUser = false;
         });
+        toast.error("Failed to fetch user data");
       });
   };
 }
