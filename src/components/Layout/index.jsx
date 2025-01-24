@@ -103,9 +103,9 @@ const Layout = ({ children }) => {
             }}
           ></Box>
           <main
-            style={{
-              minHeight: "80vh",
-            }}
+          // style={{
+          //   minHeight: "50vh",
+          // }}
           >
             {children}
           </main>

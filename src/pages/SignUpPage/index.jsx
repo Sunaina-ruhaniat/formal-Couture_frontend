@@ -8,13 +8,17 @@ import {
   Link,
   Box,
   InputAdornment,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import authStore from "stores/authStore";
 import { useNavigate } from "react-router-dom";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { TextFieldstyle } from "components/Theme";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +53,7 @@ const SignUpPage = () => {
         username: formData.email,
         password: formData.password,
         phone: formData.phone,
-        // countryCode: formData.countryCode,
+        countryCode: formData.countryCode,
       };
       authStore.register({ payload, navigate });
     }
@@ -69,24 +73,39 @@ const SignUpPage = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="center"
-      height="100vh"
-      bgcolor="#f9f9f9"
+      height="75vh"
+      padding={15}
     >
       <Box
-        width={500}
-        p={3}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        boxShadow={3}
-        borderRadius={2}
-        bgcolor="white"
+        sx={{
+          width: 800,
+          padding: 3,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          borderRadius: 3,
+          bgcolor: "#fff",
+        }}
       >
-        <Typography variant="h5" gutterBottom>
-          Create your account
+        {/* Heading: Create Account */}
+        <Typography
+          variant="h3"
+          gutterBottom
+          color="#000"
+          fontWeight="semibold"
+          letterSpacing={4}
+          mb={3}
+          sx={{
+            textTransform: "uppercase",
+            textAlign: "left",
+            width: "100%",
+          }}
+        >
+          create account
         </Typography>
-        <form onSubmit={handleSubmit}>
+
+        {/* Email */}
+        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <TextField
             fullWidth
             margin="normal"
@@ -97,7 +116,14 @@ const SignUpPage = () => {
             error={!!errors.email}
             helperText={errors.email}
             variant="outlined"
+            sx={{
+              input: { color: "#000" },
+              marginBottom: 2,
+              ...TextFieldstyle,
+            }}
           />
+
+          {/* Password */}
           <TextField
             fullWidth
             margin="normal"
@@ -111,19 +137,25 @@ const SignUpPage = () => {
             variant="outlined"
             InputProps={{
               endAdornment: (
-                <InputAdornment position="end">
-                  <Button
-                    sx={{ minWidth: "auto" }}
-                    onClick={togglePasswordVisibility}
-                  >
-                    {showPassword ? "🙈" : "👁️"}
-                  </Button>
-                </InputAdornment>
+                <Button
+                  sx={{ minWidth: "auto", color: "#000" }}
+                  onClick={togglePasswordVisibility}
+                  size="small"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </Button>
               ),
             }}
+            sx={{
+              input: { color: "#000" },
+              marginBottom: 2,
+              ...TextFieldstyle,
+            }}
           />
+
+          {/* Phone and Country Code (Only India +91) */}
           <Box display="flex" gap={1} width="100%" mt={2}>
-            <FormControl fullWidth>
+            <FormControl>
               <InputLabel>Country Code</InputLabel>
               <Select
                 value={formData.countryCode}
@@ -131,11 +163,10 @@ const SignUpPage = () => {
                   setFormData({ ...formData, countryCode: e.target.value })
                 }
                 label="Country Code"
+                disabled
+                style={{ width: "120px" }}
               >
                 <MenuItem value="+91">🇮🇳 +91</MenuItem>
-                <MenuItem value="+1">🇺🇸 +1</MenuItem>
-                <MenuItem value="+44">🇬🇧 +44</MenuItem>
-                {/* Add more country codes here */}
               </Select>
             </FormControl>
             <TextField
@@ -147,28 +178,48 @@ const SignUpPage = () => {
               error={!!errors.phone}
               helperText={errors.phone}
               variant="outlined"
+              sx={{
+                width: "40rem",
+                ...TextFieldstyle,
+              }}
             />
           </Box>
+
+          {/* Checkbox */}
           <FormControlLabel
-            control={<Checkbox defaultChecked />}
+            control={<Checkbox defaultChecked color="default" />}
             label="I would like 10% off on my next purchase, plus personalised offers, news and the latest trends"
             sx={{ mt: 2 }}
           />
+
+          {/* Submit Button */}
           <Button
             fullWidth
             variant="contained"
-            sx={{ bgcolor: "black", color: "white", mt: 2 }}
+            sx={{
+              bgcolor: "black",
+              color: "white",
+              fontSize: "18px",
+              mt: 2,
+              height: 50,
+              "&:hover": { bgcolor: "#333" },
+              borderRadius: "0px",
+            }}
             type="submit"
           >
             Create account
           </Button>
         </form>
+
+        {/* Redirect to Sign In */}
         <Typography variant="body2" mt={2}>
           Already have an account?{" "}
           <Link href="/login" sx={{ color: "black", fontWeight: "bold" }}>
             Sign in
           </Link>
         </Typography>
+
+        {/* Privacy and Terms */}
         <Typography
           variant="caption"
           color="textSecondary"
