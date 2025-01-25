@@ -96,24 +96,37 @@ const WishlistPage = () => {
                 image={`${BASE_URL}${item.product.images[0]}`}
                 alt={item.product.name}
               />
+            </Card>
+            <Card>
               <CardContent>
-                <Typography variant="subtitle1" gutterBottom>
-                  {item.product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {`Available in: ${item.variant.size}, ${item.variant.color}`}
-                </Typography>
-                <Typography
-                  variant="h6"
-                  color="black"
-                  gutterBottom
-                  sx={{ fontWeight: "bold" }}
+                <div
+                  style={{
+                    display: "flex",
+                    // justifyContent: "flex-end",
+                    // width: "100%",
+                  }}
                 >
-                  Rs.{item.product.price}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {`${item.product.rating} ★ (${item.product.reviews} reviews)`}
-                </Typography>
+                  <Typography variant="subtitle1" gutterBottom>
+                    {item.product.name}
+                  </Typography>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      color="black"
+                      gutterBottom
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      Rs.{item.product.price}
+                    </Typography>
+                  </div>
+                </div>
+
                 <Typography variant="body2" sx={{ mb: 0.5, fontSize: "14px" }}>
                   Size
                 </Typography>
