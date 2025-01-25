@@ -26,26 +26,50 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
+  // const validateForm = () => {
+  //   const newErrors = {};
+  //   const phonePattern = /^[0-9]{10}$/; // For phone validation: 10 digits
+  //   const passwordPattern = /^(?=.*[A-Z]).{8,}$/; // Password should be at least 8 characters and contain at least one capital letter
+
+  //   // Phone Validation
+  //   if (!formData.phone.trim() || !phonePattern.test(formData.phone))
+  //     newErrors.phone = "Please enter a valid 10-digit phone number.";
+
+  //   // Password Validation
+  //   if (!formData.password.trim() || !passwordPattern.test(formData.password))
+  //     newErrors.password =
+  //       "Password must be at least 8 characters, including at least one capital letter.";
+
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
+
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   if (validateForm()) {
+  //   try {
+  //     await authStore.login({
+  //       payload: formData,
+  //       navigate,
+  //     });
+  //   } catch (error) {
+  //     toast.error("Login failed. Please try again.");
+  //   }
+  //   }
+  // };
+
   const validateForm = () => {
     const newErrors = {};
-    const phonePattern = /^[0-9]{10}$/; // For phone validation: 10 digits
-    const passwordPattern = /^(?=.*[A-Z]).{8,}$/; // Password should be at least 8 characters and contain at least one capital letter
-
-    // Phone Validation
-    // if (!formData.phone.trim() || !phonePattern.test(formData.phone))
-    //   newErrors.phone = "Please enter a valid 10-digit phone number.";
-
-    // // Password Validation
-    // if (!formData.password.trim() || !passwordPattern.test(formData.password))
-    //   newErrors.password =
-    //     "Password must be at least 8 characters, including at least one capital letter.";
-
-    // setErrors(newErrors);
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Valid email is required.";
+    if (!formData.password.trim() || formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event) => {
-    // event.preventDefault();
+    event.preventDefault();
     // if (validateForm()) {
     try {
       await authStore.login({
