@@ -41,21 +41,21 @@ const LoginPage = () => {
     //     "Password must be at least 8 characters, including at least one capital letter.";
 
     // setErrors(newErrors);
-    // return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event) => {
     // event.preventDefault();
-    if (validateForm()) {
-      try {
-        await authStore.login({
-          payload: formData,
-          navigate,
-        });
-      } catch (error) {
-        toast.error("Login failed. Please try again.");
-      }
+    // if (validateForm()) {
+    try {
+      await authStore.login({
+        payload: formData,
+        navigate,
+      });
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
     }
+    // }
   };
 
   const handleInputChange = (e) => {

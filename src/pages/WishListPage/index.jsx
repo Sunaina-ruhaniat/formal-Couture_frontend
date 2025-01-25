@@ -91,7 +91,8 @@ const WishlistPage = () => {
               </IconButton>
               <CardMedia
                 component="img"
-                height="300"
+                height="auto"
+                maxheight="50%"
                 image={`${BASE_URL}${item.product.images[0]}`}
                 alt={item.product.name}
               />
