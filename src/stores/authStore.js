@@ -25,6 +25,7 @@ class AuthStore {
       const res = await axios.post("/auth/login", payload, {
         withCredentials: true,
       });
+      console.log("AM HERE ");
       if (res.status === 200) {
         const data = res?.data;
         localStorage.setItem("user", JSON.stringify(data?.user));

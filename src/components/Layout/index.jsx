@@ -38,8 +38,8 @@ const Layout = ({ children }) => {
           ></Divider>
           <Box
             sx={{
-              backgroundColor: "#f0c14b",
-              // backgroundColor: "#f3f3f3",
+              // backgroundColor: "#f0c14b",
+              backgroundColor: "#f3f3f3",
               padding: "15px",
               textAlign: "center",
               borderTop: "none",
@@ -95,7 +95,9 @@ const Layout = ({ children }) => {
           ></Divider>
           <Box
             sx={{
-              backgroundColor: "#f0c14b",
+              // backgroundColor: "#f0c14b",
+              backgroundColor: "#b8aaad",
+
               // backgroundColor: "#f3f3f3",
               padding: "15px",
               textAlign: "center",

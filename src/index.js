@@ -2,12 +2,29 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 // import theme from "config/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import App from "core";
 import Notification from "components/Notification";
 // import "./index.css";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "'Roboto', sans-serif", // Replace 'Roboto' with the desired font
+  },
+  palette: {
+    mode: "light",
+    background: {
+      default: "#ffffff",
+      paper: "#f9f9f9",
+    },
+    text: {
+      primary: "#000000",
+      secondary: "#555555",
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -15,12 +15,13 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import { observer } from "mobx-react";
-import cartStore from "stores/cartStore"; // Import the cartStore
+import cartStore from "stores/cartStore";
 import { useNavigate } from "react-router-dom";
 import OrderSummary from "./components/OrderSummary";
 import PromoCode from "./components/PromoCode";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import wishlistStore from "stores/wishlistStore";
+import { TextFieldstyle } from "components/Theme";
 
 const ShoppingCart = observer(() => {
   const navigate = useNavigate();
@@ -66,18 +67,19 @@ const ShoppingCart = observer(() => {
 
   const handleQuantityChange = (event, item) => {
     const newQuantity = event.target.value;
-    console.log(JSON.stringify(item.quantity), JSON.stringify(item))
-    const change = newQuantity -  item.quantity
+    console.log(JSON.stringify(item.quantity), JSON.stringify(item));
+    const change = newQuantity - item.quantity;
     if (change < 0) {
-      cartStore.removeFromCart(item.product._id, Math.abs(change),item.variant, true )
-
-      // alert('its removal');
+      cartStore.removeFromCart(
+        item.product._id,
+        Math.abs(change),
+        item.variant,
+        true
+      );
     }
     if (change > 0) {
-      cartStore.addToCart(item.product._id, change,item.variant, true )
-      // alert('its addition')
+      cartStore.addToCart(item.product._id, change, item.variant, true);
     }
-    // cartStore.updateQuantity(item.product._id, newQuantity, item.variant);
   };
 
   const handleSizeChange = (event, item) => {
@@ -206,14 +208,8 @@ const ShoppingCart = observer(() => {
                             mb: 3,
                             width: "160px",
                             height: "45px",
-                            border: "2px solid black",
                             borderRadius: 0,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "black",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "black",
-                            },
+                            ...TextFieldstyle,
                           }}
                         >
                           {item.product.sizes.map((size) => (
@@ -230,7 +226,7 @@ const ShoppingCart = observer(() => {
                           Quantity
                         </Typography>
                         <Select
-                          value={item.quantity }
+                          value={item.quantity}
                           onChange={(event) =>
                             handleQuantityChange(event, item)
                           }
@@ -239,17 +235,14 @@ const ShoppingCart = observer(() => {
                             mb: 3,
                             width: "160px",
                             height: "45px",
-                            border: "2px solid black",
                             borderRadius: 0,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "black",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "black",
-                            },
+                            ...TextFieldstyle,
                           }}
                         >
-                          {Array.from({length: item.product.stock}, (_, i) => i + 1).map((num) => (
+                          {Array.from(
+                            { length: item.product.stock },
+                            (_, i) => i + 1
+                          ).map((num) => (
                             <MenuItem key={num} value={num}>
                               {num}
                             </MenuItem>

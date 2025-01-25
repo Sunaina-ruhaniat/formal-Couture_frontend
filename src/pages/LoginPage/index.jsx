@@ -32,20 +32,20 @@ const LoginPage = () => {
     const passwordPattern = /^(?=.*[A-Z]).{8,}$/; // Password should be at least 8 characters and contain at least one capital letter
 
     // Phone Validation
-    if (!formData.phone.trim() || !phonePattern.test(formData.phone))
-      newErrors.phone = "Please enter a valid 10-digit phone number.";
+    // if (!formData.phone.trim() || !phonePattern.test(formData.phone))
+    //   newErrors.phone = "Please enter a valid 10-digit phone number.";
 
-    // Password Validation
-    if (!formData.password.trim() || !passwordPattern.test(formData.password))
-      newErrors.password =
-        "Password must be at least 8 characters, including at least one capital letter.";
+    // // Password Validation
+    // if (!formData.password.trim() || !passwordPattern.test(formData.password))
+    //   newErrors.password =
+    //     "Password must be at least 8 characters, including at least one capital letter.";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // setErrors(newErrors);
+    // return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     if (validateForm()) {
       try {
         await authStore.login({

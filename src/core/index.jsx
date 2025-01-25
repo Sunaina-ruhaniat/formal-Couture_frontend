@@ -9,6 +9,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Layout from "components/Layout";
 import SignupPage from "pages/SignUpPage";
 import AdminRoute from "./AdminRoute";
+import AppSnackbar from "components/AlertMessage";
 
 const LoginPage = lazy(() => import("pages/LoginPage"));
 const HomePage = lazy(() => import("pages/HomePage"));
@@ -85,6 +86,23 @@ const publicRoutes = [
     path: publicPaths.paymentStage,
     Component: <PaymentPage />,
   },
+  {
+    path: privatePaths.admin.adminProfile,
+    Component: <AdminProfilePage />,
+  },
+  {
+    path: privatePaths.admin.page,
+    Component: <AdminDashboardPage />,
+  },
+  {
+    path: privatePaths.admin.productPage,
+    Component: <AdminProductPage />,
+  },
+  {
+    path: privatePaths.admin.orders,
+    Component: <AdminOrderPage />,
+  },
+  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
 ];
 
 const privateRoutes = [
@@ -169,6 +187,7 @@ const App = () => {
           element={<Navigate to={publicPaths.home} replace />}
         />
       </Routes>
+      {/* <AppSnackbar /> */}
     </Suspense>
   );
 };

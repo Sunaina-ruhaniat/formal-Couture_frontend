@@ -1,195 +1,159 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
+  Grid,
   Typography,
-  Button,
   Card,
   CardContent,
   CardMedia,
-  Grid,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
   IconButton,
-  Breadcrumbs,
-  Container,
 } from "@mui/material";
-import { observer } from "mobx-react";
-import wishlistStore from "stores/wishlistStore";
-import { Link } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios"; // Use axios instance if needed
+import wishlistStore from "stores/wishlistStore"; // Assuming you have a MobX store for wishlist
+import { TextFieldstyle } from "components/Theme";
 
-const WishlistPage = observer(() => {
+const WishlistPage = () => {
   const [loading, setLoading] = useState(true);
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://localhost:8000"; // Change this if needed
 
+  // Fetching wishlist from MobX store
   useEffect(() => {
     const fetchWishlist = async () => {
-      await wishlistStore.getWishlist();
-      setLoading(false);
+      await wishlistStore.getWishlist(); // Fetch wishlist from MobX store
+      setLoading(false); // Stop loading once the wishlist is fetched
     };
     fetchWishlist();
   }, []);
 
+  // Handling remove from wishlist
   const handleRemoveFromWishlist = async (item) => {
     await wishlistStore.removeFromWishlist(item.product._id, item.variant);
   };
 
+  // Handle adding to cart
   const handleMoveToCart = async (item) => {
     await wishlistStore.moveToCart(item.product._id, item.variant);
   };
 
+  // Get wishlist products from MobX store
   const wishlistProducts = wishlistStore.wishlist?.products || [];
 
+  if (loading) {
+    return (
+      <Box sx={{ padding: 4 }}>
+        <Typography variant="h4" textAlign="center" gutterBottom>
+          Loading Wishlist...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Container sx={{ maxWidth: "xl", paddingTop: 4 }}>
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        separator=">"
-        aria-label="breadcrumb"
-        sx={{
-          fontSize: "14px",
-          mb: 4,
-        }}
+    <Box sx={{ padding: 4 }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        textAlign="center"
+        sx={{ fontWeight: "bold", marginBottom: 4 }}
       >
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/home"
-          sx={{ color: "#3f51b5", fontWeight: "bold" }}
-        >
-          Home
-        </Link>
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/products"
-          sx={{ color: "#3f51b5", fontWeight: "bold" }}
-        >
-          Products
-        </Link>
-        <Typography sx={{ color: "#000", fontWeight: "bold" }}>
-          Wishlist
-        </Typography>
-      </Breadcrumbs>
-
-      <Box
-        sx={{
-          padding: "20px",
-          backgroundColor: "#f9f9f9",
-          borderRadius: "10px",
-        }}
+        MY WISHLIST
+      </Typography>
+      <Typography
+        variant="subtitle1"
+        textAlign="center"
+        gutterBottom
+        sx={{ marginBottom: 4 }}
       >
-        <Typography variant="h4" sx={{ marginBottom: 4, textAlign: "center" }}>
-          Your Wishlist
-        </Typography>
-
-        {loading ? (
-          <Typography variant="h6" color="textSecondary" align="center">
-            Loading wishlist...
-          </Typography>
-        ) : wishlistProducts.length === 0 ? (
-          <Typography variant="h6" color="textSecondary" align="center">
-            Your wishlist is empty. Start adding your favorite products!
-          </Typography>
-        ) : (
-          <Grid container spacing={3}>
-            {wishlistProducts.map((item) => (
-              <Grid item xs={12} sm={6} md={3} lg={3} key={item.product._id}>
-                <Card
+        ALL YOUR MOST-LOVED STYLES, IN ONE PLACE.
+      </Typography>
+      <Grid container spacing={4} justifyContent="center">
+        {wishlistProducts.map((item) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={item.product._id}>
+            <Card sx={{ position: "relative", boxShadow: 3 }}>
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  background: "rgba(255,255,255,0.8)",
+                  zIndex: 10,
+                }}
+                size="small"
+                onClick={() => handleRemoveFromWishlist(item)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+              <CardMedia
+                component="img"
+                height="300"
+                image={`${BASE_URL}${item.product.images[0]}`}
+                alt={item.product.name}
+              />
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  {item.product.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  {`Available in: ${item.variant.size}, ${item.variant.color}`}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  color="black"
+                  gutterBottom
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Rs.{item.product.price}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  {`${item.product.rating} ★ (${item.product.reviews} reviews)`}
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 0.5, fontSize: "14px" }}>
+                  Size
+                </Typography>
+                <Select
+                  defaultValue={item.variant.size}
                   sx={{
-                    // borderRadius: "12px", // Rounded corners for card
-                    overflow: "hidden",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                    "&:hover": {
-                      boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-                    },
-                    // border: "1px solid #e0e0e0", // Light border for classy effect
-                    backgroundColor: "#fff",
+                    width: "100%",
+                    height: "50px",
+                    borderRadius: 0,
+                    ...TextFieldstyle,
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    image={`${BASE_URL}${item.product.images[0]}`}
-                    alt={item.product.name}
-                    sx={{
-                      height: "300px", // Increased image height for a larger impact
-                      objectFit: "cover", // Ensure image covers the container
-                      width: "100%", // Full width
-                      //   borderTopLeftRadius: "12px", // Square borders at the top corners
-                      //   borderTopRightRadius: "12px", // Square borders at the top corners
-                    }}
-                  />
-                  <CardContent sx={{ padding: "16px" }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: "bold",
-                        fontSize: "16px",
-                        color: "#333",
-                      }}
-                    >
-                      {item.product.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ marginTop: "4px" }}
-                    >
-                      Size: {item.variant.size} | Color: {item.variant.color}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      sx={{ marginTop: "8px", color: "#3f51b5" }}
-                    >
-                      Rs.{item.product.price}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginTop: "12px", // Adjusted margin for better spacing
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        startIcon={<AddShoppingCartIcon />}
-                        onClick={() => handleMoveToCart(item)}
-                        sx={{
-                          //   borderRadius: "8px",
-                          padding: "6px 12px",
-                          backgroundColor: "#00796b", // Classy button color
-                          "&:hover": {
-                            backgroundColor: "#004d40", // Hover effect
-                          },
-                        }}
-                      >
-                        Add to Cart
-                      </Button>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleRemoveFromWishlist(item)}
-                        sx={{
-                          backgroundColor: "#f44336",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "#d32f2f",
-                          },
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                  {item.product.sizes.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#000",
+                    color: "white",
+                    fontSize: "18px",
+                    mt: 2,
+                    "&:hover": { backgroundColor: "#ffffff", color: "#333333" },
+                    borderRadius: "0px",
+                    height: 50,
+                  }}
+                  onClick={() => handleMoveToCart(item)}
+                >
+                  ADD TO CART
+                </Button>
+              </CardContent>
+            </Card>
           </Grid>
-        )}
-      </Box>
-    </Container>
+        ))}
+      </Grid>
+    </Box>
   );
-});
+};
 
 export default WishlistPage;
