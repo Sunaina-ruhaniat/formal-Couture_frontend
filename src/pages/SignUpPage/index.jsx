@@ -23,6 +23,7 @@ import { TextFieldstyle } from "components/Theme";
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     email: "",
+    name: "",
     password: "",
     phone: "",
     countryCode: "+91",
@@ -31,17 +32,34 @@ const SignUpPage = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
+
+    // Validate email
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Valid email is required.";
-    if (!formData.password.trim() || formData.password.length < 6)
+    }
+
+    // Validate password
+    if (!formData.password.trim() || formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
-    if (!formData.phone.trim() || !/^\d{10}$/.test(formData.phone))
+    }
+
+    // Validate name (only letters and no special characters)
+    if (!formData.name.trim() || formData.name.length < 6) {
+      newErrors.name = "Name must be at least 6 characters.";
+    } else if (/[^a-zA-Z\s]/.test(formData.name)) {
+      newErrors.name =
+        "Name must only contain letters and spaces. No special characters allowed.";
+    }
+
+    // Validate phone number
+    if (!formData.phone.trim() || !/^\d{10}$/.test(formData.phone)) {
       newErrors.phone = "Valid 10-digit phone number is required.";
+    }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -50,7 +68,8 @@ const SignUpPage = () => {
     if (validateForm()) {
       const payload = {
         email: formData.email,
-        username: formData.email,
+        name: formData.name,
+        username: formData.name,
         password: formData.password,
         phone: formData.phone,
         countryCode: formData.countryCode,
@@ -69,13 +88,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      height="75vh"
-      padding={15}
-    >
+    <Box display="flex" flexDirection="column" alignItems="center" padding={15}>
       <Box
         sx={{
           width: 800,
@@ -153,6 +166,22 @@ const SignUpPage = () => {
             }}
           />
 
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Full Name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+            variant="outlined"
+            sx={{
+              input: { color: "#000" },
+              marginBottom: 2,
+              ...TextFieldstyle,
+            }}
+          />
           {/* Phone and Country Code (Only India +91) */}
           <Box display="flex" gap={1} width="100%" mt={2}>
             <FormControl>

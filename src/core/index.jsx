@@ -105,46 +105,49 @@ const publicRoutes = [
   { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
 ];
 
-const privateRoutes = [
-  {
-    path: privatePaths.customer.profile,
-    Component: <ProfilePage />,
-  },
-  {
-    path: privatePaths.customer.checkout,
-    Component: <CheckoutPage />,
-  },
-  {
-    path: privatePaths.customer.CustomerWishlist,
-    Component: <WishListPage />,
-  },
-  {
-    path: privatePaths.customer.CustomerShoppingBag,
-    Component: <AddToCartPage />,
-  },
-];
-const adminRoutes = [
-  {
-    path: privatePaths.admin.adminProfile,
-    Component: <AdminProfilePage />,
-  },
-  {
-    path: privatePaths.admin.page,
-    Component: <AdminDashboardPage />,
-  },
-  {
-    path: privatePaths.admin.productPage,
-    Component: <AdminProductPage />,
-  },
-  {
-    path: privatePaths.admin.orders,
-    Component: <AdminOrderPage />,
-  },
-  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
-];
+const privateRoutes = {
+  customer: [
+    {
+      path: privatePaths.customer.profile,
+      Component: <ProfilePage />,
+    },
+    {
+      path: privatePaths.customer.checkout,
+      Component: <CheckoutPage />,
+    },
+    {
+      path: privatePaths.customer.CustomerWishlist,
+      Component: <WishListPage />,
+    },
+    {
+      path: privatePaths.customer.CustomerShoppingBag,
+      Component: <AddToCartPage />,
+    },
+  ],
+  admin: [
+    {
+      path: privatePaths.admin.adminProfile,
+      Component: <AdminProfilePage />,
+    },
+    {
+      path: privatePaths.admin.page,
+      Component: <AdminDashboardPage />,
+    },
+    {
+      path: privatePaths.admin.productPage,
+      Component: <AdminProductPage />,
+    },
+    {
+      path: privatePaths.admin.orders,
+      Component: <AdminOrderPage />,
+    },
+    { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
+  ],
+};
 
 const App = () => {
   const role = localStorage.getItem("role");
+  console.log("role && privateRoutes[role]", role, privateRoutes[role]);
 
   return (
     <Suspense fallback={<LinearProgress />}>
@@ -157,29 +160,23 @@ const App = () => {
           />
         ))}
 
-        {role && privateRoutes[role] ? (
-          privateRoutes[role].map((route) => (
+        {role &&
+          privateRoutes?.[role].map((route) => (
             <Route
               key={route.path}
               path={route.path}
               element={<PrivateRoute>{route.Component}</PrivateRoute>}
             />
-          ))
-        ) : (
-          <Route
-            path="*"
-            element={<Navigate to={publicPaths.login} replace />}
-          />
-        )}
+          ))}
 
-        {role === "admin" &&
+        {/* {role === "admin" &&
           adminRoutes.map((route) => (
             <Route
               key={route.path}
               path={route.path}
               element={<AdminRoute>{route.Component}</AdminRoute>}
             />
-          ))}
+          ))} */}
         <Route path="*" element={<Navigate to={publicPaths.home} replace />} />
         <Route
           exact

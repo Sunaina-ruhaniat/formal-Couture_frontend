@@ -3,6 +3,7 @@ import { TextField, Button, Typography, Box } from "@mui/material";
 import { observer } from "mobx-react";
 import referralCodeStore from "stores/referralCodeStore";
 import cartStore from "stores/cartStore";
+import { TextFieldstyle } from "components/Theme";
 
 const PromoCode = observer(() => {
   const [promoCode, setPromoCode] = useState("");
@@ -28,7 +29,10 @@ const PromoCode = observer(() => {
 
   return (
     <Box sx={{ marginTop: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+      <Typography
+        variant="h6"
+        sx={{ marginBottom: 2, textTransform: "uppercase", letterSpacing: 2 }}
+      >
         Apply Promo Code
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -39,34 +43,28 @@ const PromoCode = observer(() => {
           value={promoCode}
           onChange={handlePromoChange}
           error={!!errorMessage}
-          helperText={errorMessage}
-          InputProps={{
-            sx: {
-              height: "50px",
-              borderRadius: "8px",
-              paddingLeft: 2,
-              paddingRight: 2,
-              backgroundColor: "#f5f5f5",
-            },
-          }}
           sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
+            // height: "5vh",
+            paddingLeft: 2,
+            paddingRight: 2,
+            ...TextFieldstyle,
           }}
         />
         <Button
           variant="contained"
           sx={{
-            height: "50px",
+            bgcolor: "#000",
+            color: "white",
+            fontSize: "18px",
+            height: "5vh",
             width: "150px",
-            // borderRadius: "8px",
-            // fontWeight: "bold",
             letterSpacing: "0.2rem",
             backgroundColor: "#000000",
             color: "#fff",
             "&:hover": {
-              backgroundColor: "#000000",
+              backgroundColor: "#ffffff",
+              color: "#333333",
+              letterSpacing: "0.2rem",
             },
           }}
           onClick={handleApplyPromo}
@@ -75,7 +73,11 @@ const PromoCode = observer(() => {
         </Button>
       </Box>
       {errorMessage && (
-        <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+        <Typography
+          variant="body2"
+          color="error"
+          sx={{ marginTop: 1, marginLeft: 3 }}
+        >
           {errorMessage}
         </Typography>
       )}

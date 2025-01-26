@@ -43,7 +43,6 @@ class CartStore {
         toast.success("Added to Cart!");
         navigate("/shoppingBag");
       } else {
-        console.log("Response", response);
         toast.error(response.data.message);
       }
     } catch (error) {
@@ -65,6 +64,9 @@ class CartStore {
 
       if (response.status === 200) {
         this.wishlist.push(response.data);
+        toast.success("Added to Wishlist!");
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Error adding to wishlist", error);

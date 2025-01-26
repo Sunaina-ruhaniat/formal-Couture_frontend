@@ -392,8 +392,9 @@ const ProductPage = () => {
           </Grid>
         </Grid>
       </Box>
-
-      <ReviewPage />
+      <div style={{ marginTop: "2rem" }}>
+        <ReviewPage />
+      </div>
     </div>
   );
 };

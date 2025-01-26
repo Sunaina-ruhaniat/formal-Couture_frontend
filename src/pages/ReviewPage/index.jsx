@@ -98,11 +98,15 @@ const ReviewPage = () => {
   );
 
   return (
-    <Box sx={{ p: 4, bgcolor: "background.default", color: "text.primary" }}>
-      <Typography
-        variant="h5"
-        sx={{ mb: 2, fontWeight: "bold", color: "#000000" }}
-      >
+    <Box
+      sx={{
+        p: 4,
+        bgcolor: "background.default",
+        color: "text.primary",
+        marginTop: 4,
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2, mt: 16, letterSpacing: 2 }}>
         REVIEWS
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>

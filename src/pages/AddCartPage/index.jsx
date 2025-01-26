@@ -116,7 +116,7 @@ const ShoppingCart = observer(() => {
         <Grid container spacing={4}>
           {/* Basket Section */}
           <Grid item xs={12} md={7}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom sx={{ letterSpacing: 2 }}>
               YOUR BASKET ({hasItemsInCart ? cartStore.cart.products.length : 0}
               )
             </Typography>
@@ -290,9 +290,23 @@ const ShoppingCart = observer(() => {
               </Typography>
             )}
             <Button
-              variant="contained"
               onClick={handleContinueShopping}
-              sx={{ mt: 2, backgroundColor: "#000", color: "#fff" }}
+              variant="contained"
+              sx={{
+                bgcolor: "#000",
+                color: "white",
+                fontSize: "18px",
+                mt: 2,
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                  color: "#333333",
+                  letterSpacing: "0.2rem",
+                },
+                borderRadius: "0px",
+                height: 50,
+                width: 400,
+                letterSpacing: "0.2rem",
+              }}
             >
               Continue Shopping
             </Button>
@@ -309,9 +323,22 @@ const ShoppingCart = observer(() => {
                 <OrderSummary subtotal={subtotal} />
                 <Divider sx={{ mt: 2, mb: 2 }} />
                 <Button
-                  variant="contained"
                   fullWidth
-                  sx={{ mt: 2, backgroundColor: "#000", color: "#fff" }}
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#000",
+                    color: "white",
+                    fontSize: "18px",
+                    mt: 2,
+                    "&:hover": {
+                      backgroundColor: "#ffffff",
+                      color: "#333333",
+                      letterSpacing: "0.2rem",
+                    },
+                    borderRadius: "0px",
+                    height: 50,
+                    letterSpacing: "0.2rem",
+                  }}
                   startIcon={<ShoppingCartIcon />}
                   onClick={handleCheckout}
                 >

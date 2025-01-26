@@ -52,20 +52,24 @@ export const ShippingDropdown = () => {
 const OrderSummary = ({ subtotal }) => {
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h6">SUMMARY</Typography>
+      <Typography variant="h6" sx={{ letterSpacing: "0.2rem" }}>
+        SUMMARY
+      </Typography>
       <Divider sx={{ my: 2 }} />
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography>Subtotal</Typography>
+        <Typography sx={{ letterSpacing: "2px" }}>Subtotal</Typography>
         <Typography>Rs.{subtotal}</Typography>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-        <Typography>Delivery</Typography>
+        <Typography sx={{ letterSpacing: "2px" }}>Delivery</Typography>
         <Typography>Rs.0</Typography>
       </Box>
       {/* <ShippingDropdown /> */}
       <Divider sx={{ my: 2 }} />
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6">TOTAL</Typography>
+        <Typography variant="h6" sx={{ letterSpacing: "0.2rem" }}>
+          TOTAL
+        </Typography>
         <Typography variant="h6">Rs.{subtotal}</Typography>
       </Box>
     </Box>

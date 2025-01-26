@@ -96,7 +96,7 @@ const LoginPage = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      height="70vh"
+      // height="70vh"
       padding={15}
     >
       <Box
