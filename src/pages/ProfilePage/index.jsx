@@ -21,6 +21,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const userDataString = localStorage.getItem("user");
+    console.log("userDataString", userDataString);
     if (!userDataString) {
       navigate("/login");
       return;

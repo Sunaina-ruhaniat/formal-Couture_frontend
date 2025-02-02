@@ -17,6 +17,9 @@ const ProductListPage = lazy(() => import("pages/ProductListing"));
 const ProductDetailPage = lazy(() => import("pages/ProductDetails"));
 const ProfilePage = lazy(() => import("pages/ProfilePage"));
 const AddToCartPage = lazy(() => import("pages/AddCartPage"));
+const CustomerOrderDetails = lazy(() =>
+  import("pages/ProfilePage/components/OrderDetailsPage")
+);
 const CheckoutPage = lazy(() =>
   import("pages/AddCartPage/components/CheckoutPage")
 );
@@ -103,6 +106,46 @@ const publicRoutes = [
     Component: <AdminOrderPage />,
   },
   { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
+  {
+    path: privatePaths.admin.adminProfile,
+    Component: <AdminProfilePage />,
+  },
+  {
+    path: privatePaths.admin.page,
+    Component: <AdminDashboardPage />,
+  },
+  {
+    path: privatePaths.admin.productPage,
+    Component: <AdminProductPage />,
+  },
+  {
+    path: privatePaths.admin.orders,
+    Component: <AdminOrderPage />,
+  },
+  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
+];
+
+const customerRoutes = [
+  {
+    path: privatePaths.customer.profile,
+    Component: <ProfilePage />,
+  },
+  {
+    path: privatePaths.customer.orders,
+    Component: <CustomerOrderDetails />,
+  },
+  {
+    path: privatePaths.customer.checkout,
+    Component: <CheckoutPage />,
+  },
+  {
+    path: privatePaths.customer.CustomerWishlist,
+    Component: <WishListPage />,
+  },
+  {
+    path: privatePaths.customer.CustomerShoppingBag,
+    Component: <AddToCartPage />,
+  },
 ];
 
 const privateRoutes = {
@@ -160,6 +203,14 @@ const App = () => {
           />
         ))}
 
+        {role === "customer" &&
+          customerRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<PrivateRoute>{route.Component}</PrivateRoute>}
+            />
+          ))}
         {role &&
           privateRoutes?.[role].map((route) => (
             <Route

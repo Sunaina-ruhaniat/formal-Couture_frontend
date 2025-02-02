@@ -31,7 +31,7 @@ const SecureCheckout = () => {
       alert("Password is required.");
       return;
     }
-    navigate("/secure/checkout/login-existing-customer/");
+    navigate("/secure/checkout/");
   };
 
   return (
@@ -71,11 +71,6 @@ const SecureCheckout = () => {
           sx={{ marginBottom: 3 }}
         >
           <FormControlLabel
-            value="guest"
-            control={<Radio />}
-            label="Continue as guest"
-          />
-          <FormControlLabel
             value="signin"
             control={<Radio />}
             label="Yes my password is..."
@@ -103,16 +98,22 @@ const SecureCheckout = () => {
         )}
         <Button
           type="submit"
-          variant="contained"
           color="primary"
           fullWidth
+          variant="contained"
           sx={{
-            textTransform: "none",
-            backgroundColor: "#1a3e36",
-            paddingY: 1.5,
+            bgcolor: "#000",
+            color: "white",
+            fontSize: "18px",
+            letterSpacing: "0.2rem",
+            backgroundColor: "#000000",
+            color: "#fff",
             marginTop: 3,
-            ":hover": {
-              backgroundColor: "#16382f",
+            paddingY: 1.5,
+            "&:hover": {
+              backgroundColor: "#ffffff",
+              color: "#333333",
+              letterSpacing: "0.2rem",
             },
           }}
         >

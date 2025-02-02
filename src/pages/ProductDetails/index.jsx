@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import productStore from "stores/productStore";
 import ReviewPage from "pages/ReviewPage";
 import { TextFieldstyle } from "components/Theme";
+import DeliveryCheckPage from "pages/AddCartPage/components/DeliveryCheckPage";
 
 const ProductPage = () => {
   const navigate = useNavigate();
@@ -135,9 +136,9 @@ const ProductPage = () => {
               display: "flex",
               flexDirection: "column",
               gap: 1,
-              maxHeight: "54vh",
+              maxHeight: "58vh",
               overflowY: "auto",
-              paddingRight: 2,
+              paddingRight: 4,
             }}
           >
             {product.images.map((img, index) => (
@@ -389,6 +390,7 @@ const ProductPage = () => {
                 </Button>
               </Box>
             </Box>
+            <DeliveryCheckPage />
           </Grid>
         </Grid>
       </Box>

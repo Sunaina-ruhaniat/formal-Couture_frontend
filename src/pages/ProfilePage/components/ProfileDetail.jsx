@@ -36,7 +36,7 @@ const ProfileDetails = ({ user, isEditing, onInputChange, onSaveChanges }) => {
 
       <>
         {/* Title Dropdown */}
-        <TextField
+        {/* <TextField
           select
           label="Title"
           value={user.title || ""}
@@ -47,7 +47,7 @@ const ProfileDetails = ({ user, isEditing, onInputChange, onSaveChanges }) => {
           <MenuItem value="Mr">Mr</MenuItem>
           <MenuItem value="Miss">Miss</MenuItem>
           <MenuItem value="Mrs">Mrs</MenuItem>
-        </TextField>
+        </TextField> */}
 
         {/* Name Fields */}
         <TextField

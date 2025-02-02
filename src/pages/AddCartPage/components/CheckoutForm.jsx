@@ -190,7 +190,22 @@ const CheckoutForm = () => {
         <Button
           variant="contained"
           color="primary"
-          size="large"
+          sx={{
+            width: "50%",
+            bgcolor: "#000",
+            color: "white",
+            fontSize: "18px",
+            letterSpacing: "0.2rem",
+            backgroundColor: "#000000",
+            color: "#fff",
+            marginTop: 3,
+            paddingY: 1.5,
+            "&:hover": {
+              backgroundColor: "#ffffff",
+              color: "#333333",
+              letterSpacing: "0.2rem",
+            },
+          }}
           onClick={() => navigate("/secure/checkout/payment")}
         >
           Continue to Payment

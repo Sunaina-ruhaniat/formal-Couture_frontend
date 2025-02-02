@@ -9,6 +9,7 @@ export const privatePaths = {
   },
   customer: {
     profile: "/profile",
+    orders: "/customerOrder",
     checkout: "/checkout",
     CustomerShoppingBag: "/CustomerShoppingBag",
     CustomerWishlist: "/CustomerWishlist",

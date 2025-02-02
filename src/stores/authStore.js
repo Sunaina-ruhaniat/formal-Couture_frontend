@@ -75,6 +75,8 @@ class AuthStore {
       });
       if (response.status === 200) {
         toast.success("Registration successful!");
+        localStorage.setItem("user", JSON.stringify(response.data?.user));
+        localStorage.setItem("token", response.data?.token);
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("userId", response?.data?.user?._id);
         localStorage.setItem("role", response?.data?.user?.role);
