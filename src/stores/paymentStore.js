@@ -1,7 +1,6 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
-import axios from "axios";
 import toast from "react-hot-toast";
-
+import axios from "config/axios";
 class PaymentStore {
   isLoading = false;
   razorpayOrderId = null;
@@ -24,33 +23,44 @@ class PaymentStore {
     shippingAddress,
     billingAddress,
     useReferral,
-    useExchange
+    useExchange,
+    gift
   ) => {
-    this.isLoading = true;
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/order/checkout",
-        {
-          shippingAddress,
-          billingAddress,
-          useReferral,
-          useExchange,
-        }
-      );
+      this.isLoading = true;
 
-      if (response.data && response.data.razorpay_order_id) {
+      const requestData = {
+        shippingAddress,
+        billingAddress,
+        useReferral,
+        useExchange,
+        gift,
+      };
+
+      const response = await axios.post("/order/checkout", requestData);
+
+      if (response.data && response.data.paymentLink) {
         runInAction(() => {
-          this.razorpayOrderId = response.data.razorpay_order_id;
+          this.paymentLink = response.data.checkoutSummary.paymentLink;
+          this.razorpayOrderId = response.data.checkoutSummary.orderId;
         });
-        return response.data; // Return order details to be used in the front end
+
+        console.log("Order created successfully: ", response.data);
+
+        return response.data;
       } else {
-        throw new Error("Failed to create Razorpay order");
+        throw new Error(
+          "Failed to create Razorpay order. No payment link provided."
+        );
       }
     } catch (error) {
       runInAction(() => {
         this.isLoading = false;
       });
-      toast.error("Error creating order: " + error.message);
+
+      toast.error(`Error creating order: ${error.message}`);
+      console.error("Error creating order:", error);
+
       return null;
     }
   };

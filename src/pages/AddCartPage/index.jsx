@@ -44,7 +44,12 @@ const ShoppingCart = observer(() => {
   const hasItemsInCart = cartStore.cart.products.length > 0;
 
   const handleCheckout = () => {
-    navigate("/secure/checkout/login");
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn) {
+      navigate("/secure/checkout");
+    } else {
+      navigate("/secure/checkout/login");
+    }
   };
 
   const handleContinueShopping = () => {

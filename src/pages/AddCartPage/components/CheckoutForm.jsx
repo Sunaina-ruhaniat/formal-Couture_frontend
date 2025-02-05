@@ -1,218 +1,249 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Grid,
   Typography,
   TextField,
   Button,
-  Radio,
-  RadioGroup,
   FormControlLabel,
-  FormControl,
-  FormLabel,
+  Checkbox,
+  Paper,
   Divider,
   Select,
   MenuItem,
-  Checkbox,
-  Paper,
-  Card,
-  CardContent,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+import paymentStore from "stores/paymentStore";
 
-const CheckoutForm = () => {
+const CheckoutForm = observer(() => {
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderSummary, setOrderSummary] = useState({
+    bagTotal: 139.0,
+    deliveryMethod: 2.95,
+    total: 141.95,
+  });
+  const [paymentLink, setPaymentLink] = useState("");
+
+  const onSubmit = async (data) => {
+    const shippingAddress = {
+      name: `${data.firstName} ${data.lastName}`,
+      phone: data.phoneNumber,
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2 || "",
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      zipCode: data.postalCode,
+    };
+
+    const billingAddress = shippingAddress;
+
+    const useReferral = data.useReferral;
+    const useExchange = data.useExchange;
+    const gift = data.giftPackaging;
+
+    setIsLoading(true);
+    const orderDetails = await paymentStore.createOrder(
+      shippingAddress,
+      billingAddress,
+      useReferral,
+      useExchange,
+      gift
+    );
+
+    if (orderDetails) {
+      setPaymentLink(orderDetails.paymentLink);
+      navigate("/secure/checkout/payment");
+    } else {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px", margin: "auto" }}>
-      {/* Header */}
       <Typography variant="h4" align="center" gutterBottom>
         DELIVERY
       </Typography>
 
-      {/* Delivery Options */}
-      {/* <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
-        <FormControl component="fieldset" fullWidth>
-          <FormLabel component="legend">
-            Choose your delivery method below
-          </FormLabel>
-          <RadioGroup row defaultValue="home">
-            <FormControlLabel
-              value="home"
-              control={<Radio />}
-              label="Home / Office Delivery"
-            />
-            <FormControlLabel
-              value="collect"
-              control={<Radio />}
-              label="Click & Collect"
-            />
-          </RadioGroup>
-        </FormControl>
-      </Paper> */}
-
-      {/* Delivery Address */}
       <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
           Delivery Address
         </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField label="Title" fullWidth required />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="First Name"
+                fullWidth
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
+                error={!!errors.firstName}
+                helperText={errors.firstName ? errors.firstName.message : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Last Name"
+                fullWidth
+                {...register("lastName", { required: "Last name is required" })}
+                error={!!errors.lastName}
+                helperText={errors.lastName ? errors.lastName.message : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Phone Number"
+                fullWidth
+                {...register("phoneNumber", {
+                  required: "Phone number is required",
+                })}
+                error={!!errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? errors.phoneNumber.message : ""
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Address Line 1"
+                fullWidth
+                {...register("addressLine1", {
+                  required: "Address Line 1 is required",
+                })}
+                error={!!errors.addressLine1}
+                helperText={
+                  errors.addressLine1 ? errors.addressLine1.message : ""
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Address Line 2"
+                fullWidth
+                {...register("addressLine2")}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="City"
+                fullWidth
+                {...register("city", { required: "City is required" })}
+                error={!!errors.city}
+                helperText={errors.city ? errors.city.message : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="State"
+                fullWidth
+                {...register("state", {
+                  required: "State is required",
+                })}
+                error={!!errors.state}
+                helperText={errors.state ? errors.state.message : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Postal Code"
+                fullWidth
+                {...register("postalCode", {
+                  required: "Postal Code is required",
+                })}
+                error={!!errors.postalCode}
+                helperText={errors.postalCode ? errors.postalCode.message : ""}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Country"
+                fullWidth
+                defaultValue="India"
+                {...register("country", { required: "Country is required" })}
+                error={!!errors.country}
+                helperText={errors.country ? errors.country.message : ""}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="First Name" fullWidth required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="Last Name" fullWidth required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="Phone Number" fullWidth required />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField label="Address Line 1" fullWidth required />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField label="Address Line 2" fullWidth />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="City" fullWidth required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="Postal Code" fullWidth required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Select fullWidth defaultValue="United Kingdom">
-              <MenuItem value="United Kingdom">United Kingdom</MenuItem>
-              <MenuItem value="United States">United States</MenuItem>
-              <MenuItem value="India">India</MenuItem>
-            </Select>
-          </Grid>
-          <Grid item xs={12}>
+
+          <Paper elevation={3} sx={{ padding: 3, mb: 4, mt: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              Gift Packaging
+            </Typography>
             <FormControlLabel
-              control={<Checkbox />}
-              label="Default delivery address"
+              control={<Checkbox {...register("giftPackaging")} />}
+              label="Make this order a gift for Rs.5"
             />
-          </Grid>
-        </Grid>
-      </Paper>
+          </Paper>
 
-      {/* Gift Packaging */}
-      <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Gift Packaging
-        </Typography>
-        <FormControlLabel
-          control={<Checkbox />}
-          label="Make this order a gift for Rs.5"
-        />
-      </Paper>
-
-      {/* Delivery Method */}
-      {/* <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Delivery Method
-        </Typography>
-        <RadioGroup defaultValue="standard">
-          <FormControlLabel
-            value="standard"
-            control={<Radio />}
-            label="Standard Delivery - Rs.2.95 (3-5 Working Days)"
-          />
-          <FormControlLabel
-            value="nextDay"
-            control={<Radio />}
-            label="Next Day Delivery - Rs.6.00"
-          />
-          <FormControlLabel
-            value="premium"
-            control={<Radio />}
-            label="Premium Delivery (up to 3 working days) - Rs.3.95"
-          />
-          <FormControlLabel
-            value="saturday"
-            control={<Radio />}
-            label="Saturday Delivery - Rs.6.00"
-          />
-        </RadioGroup>
-      </Paper> */}
-
-      {/* Order Summary */}
-      <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Your Items (1)
-        </Typography>
-        <Card variant="outlined" sx={{ mb: 2 }}>
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Box
-                  component="img"
-                  src="https://via.placeholder.com/100"
-                  alt="Product"
-                  sx={{ width: "100%" }}
-                />
+          <Paper elevation={3} sx={{ padding: 3, mb: 4 }}>
+            <Divider sx={{ my: 2 }} />
+            <Grid container>
+              <Grid item xs={6}>
+                <Typography>Bag Total</Typography>
               </Grid>
-              <Grid item xs={8}>
-                <Typography>Leonora Dress</Typography>
-                <Typography color="textSecondary">Color: Warm Plum</Typography>
-                <Typography color="textSecondary">Size: UK 18</Typography>
-                <Typography>Rs.139.00</Typography>
+              <Grid item xs={6}>
+                <Typography align="right">
+                  Rs.{orderSummary.bagTotal}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography>Delivery Method</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography align="right">
+                  Rs.{orderSummary.deliveryMethod}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography>Total</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography align="right">Rs.{orderSummary.total}</Typography>
               </Grid>
             </Grid>
-          </CardContent>
-        </Card>
-        <Divider sx={{ my: 2 }} />
-        <Grid container>
-          <Grid item xs={6}>
-            <Typography>Bag Total</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography align="right">Rs.139.00</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography>Delivery Method</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography align="right">Rs.2.95</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography>Total</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography align="right">Rs.141.95</Typography>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Paper>
 
-      {/* Submit Button */}
-      <Box sx={{ textAlign: "center" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            width: "50%",
-            bgcolor: "#000",
-            color: "white",
-            fontSize: "18px",
-            letterSpacing: "0.2rem",
-            backgroundColor: "#000000",
-            color: "#fff",
-            marginTop: 3,
-            paddingY: 1.5,
-            "&:hover": {
-              backgroundColor: "#ffffff",
-              color: "#333333",
-              letterSpacing: "0.2rem",
-            },
-          }}
-          onClick={() => navigate("/secure/checkout/payment")}
-        >
-          Continue to Payment
-        </Button>
-      </Box>
+          <Box sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                width: "50%",
+                bgcolor: "#000",
+                color: "white",
+                fontSize: "18px",
+                letterSpacing: "0.2rem",
+                backgroundColor: "#000000",
+                color: "#fff",
+                marginTop: 3,
+                paddingY: 1.5,
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                  color: "#333333",
+                  letterSpacing: "0.2rem",
+                },
+              }}
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? "Processing..." : "Continue to Payment"}
+            </Button>
+          </Box>
+        </form>
+      </Paper>
     </Box>
   );
-};
+});
 
 export default CheckoutForm;

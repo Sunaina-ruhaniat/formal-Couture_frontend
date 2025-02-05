@@ -42,32 +42,6 @@ class AuthStore {
     }
   };
 
-  // login = async ({ payload, navigate }) => {
-  //   runInAction(() => {
-  //     this.isLoadingLogin = true;
-  //   });
-  //   try {
-  //     const res = await axios.post("/auth/login", payload, {
-  //       withCredentials: true,
-  //     });
-  //     console.log("AM HERE ");
-  //     if (res.status === 200) {
-  //       const data = res?.data;
-  //       localStorage.setItem("user", JSON.stringify(data?.user));
-  //       localStorage.setItem("token", data?.token);
-  //       localStorage.setItem("userId", data?.user?._id);
-  //       localStorage.setItem("role", data?.user?.role);
-  //       localStorage.setItem("isLoggedIn", true);
-  //       toast.success("Login successful!");
-  //       navigate && navigate("/home");
-  //     } else {
-  //       toast.error(res.data.message);
-  //     }
-  //   } catch (error) {
-  //     toast.error("Login failed. Please try again.");
-  //   }
-  // };
-
   register = async ({ payload, navigate }) => {
     try {
       const response = await axios.post("/auth/register", payload, {
@@ -82,7 +56,7 @@ class AuthStore {
         localStorage.setItem("role", response?.data?.user?.role);
         navigate && navigate("/home");
       } else {
-        toast.error("Registration failed: Unexpected response status");
+        toast.error(response?.data?.message);
       }
     } catch (error) {
       const errorMessage =
