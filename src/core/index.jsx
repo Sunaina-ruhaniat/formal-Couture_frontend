@@ -9,7 +9,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Layout from "components/Layout";
 import SignupPage from "pages/SignUpPage";
 import AdminRoute from "./AdminRoute";
-import AppSnackbar from "components/AlertMessage";
 
 const LoginPage = lazy(() => import("pages/LoginPage"));
 const HomePage = lazy(() => import("pages/HomePage"));
@@ -43,6 +42,22 @@ const OrderDetails = lazy(() =>
   import("pages/Admin/OrderPage/components/OrderDetailPage")
 );
 const AdminProfilePage = lazy(() => import("pages/Admin/AdminProfile"));
+const CustomerCare = lazy(() => import("components/CustomerCare"));
+const ContactUs = lazy(() =>
+  import("components/CustomerCare/components/contactUs")
+);
+const PrivacyPolicy = lazy(() => import("components/Legel"));
+const TermsAndConditions = lazy(() =>
+  import("components/Legel/components/TermsAndConditions")
+);
+const ExchangePolicy = lazy(() => import("components/ExchangePolicy"));
+const DeliveryPolicy = lazy(() =>
+  import("components/ExchangePolicy/components/DeliveryPolicy")
+);
+const AboutUs = lazy(() => import("components/AboutUs"));
+const ReferralProgram = lazy(() =>
+  import("components/AboutUs/components/ReferralProgram")
+);
 
 const publicRoutes = [
   {
@@ -89,6 +104,14 @@ const publicRoutes = [
     path: publicPaths.paymentStage,
     Component: <PaymentPage />,
   },
+  { path: publicPaths.ourStory, Component: <AboutUs /> },
+  { path: publicPaths.referralProgram, Component: <ReferralProgram /> },
+  { path: publicPaths.faq, Component: <CustomerCare /> },
+  { path: publicPaths.contactUs, Component: <ContactUs /> },
+  { path: publicPaths.exchange, Component: <ExchangePolicy /> },
+  { path: publicPaths.delivery, Component: <DeliveryPolicy /> },
+  { path: publicPaths.termsAndConditions, Component: <TermsAndConditions /> },
+  { path: publicPaths.privacy, Component: <PrivacyPolicy /> },
   {
     path: privatePaths.admin.adminProfile,
     Component: <AdminProfilePage />,

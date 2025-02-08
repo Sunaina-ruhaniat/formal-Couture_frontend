@@ -35,6 +35,7 @@ class AuthStore {
         toast.success("Login successful!");
         navigate && navigate("/home");
       } else {
+        console.log("res", res.data.message);
         toast.error(res.data.message);
       }
     } catch (error) {

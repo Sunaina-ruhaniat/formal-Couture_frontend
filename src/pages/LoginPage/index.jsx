@@ -7,7 +7,7 @@ import {
   Typography,
   Box,
   InputAdornment,
-  Paper,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -15,7 +15,7 @@ import authStore from "stores/authStore";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { CssTextField, TextFieldstyle } from "components/Theme";
+import { TextFieldstyle } from "components/Theme";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -25,61 +25,37 @@ const LoginPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
-  // const validateForm = () => {
-  //   const newErrors = {};
-  //   const phonePattern = /^[0-9]{10}$/; // For phone validation: 10 digits
-  //   const passwordPattern = /^(?=.*[A-Z]).{8,}$/; // Password should be at least 8 characters and contain at least one capital letter
-
-  //   // Phone Validation
-  //   if (!formData.phone.trim() || !phonePattern.test(formData.phone))
-  //     newErrors.phone = "Please enter a valid 10-digit phone number.";
-
-  //   // Password Validation
-  //   if (!formData.password.trim() || !passwordPattern.test(formData.password))
-  //     newErrors.password =
-  //       "Password must be at least 8 characters, including at least one capital letter.";
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   if (validateForm()) {
-  //   try {
-  //     await authStore.login({
-  //       payload: formData,
-  //       navigate,
-  //     });
-  //   } catch (error) {
-  //     toast.error("Login failed. Please try again.");
-  //   }
-  //   }
-  // };
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Valid email is required.";
-    if (!formData.password.trim() || formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters.";
+    const phonePattern = /^[0-9]{10}$/;
+
+    if (!formData.phone.trim() || !phonePattern.test(formData.phone))
+      newErrors.phone = "Please enter a valid 10-digit phone number.";
+
+    if (!formData.password.trim())
+      newErrors.password = "Please enter password.";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // if (validateForm()) {
-    try {
-      await authStore.login({
-        payload: formData,
-        navigate,
-      });
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
+    if (validateForm()) {
+      setLoading(true);
+      try {
+        await authStore.login({
+          payload: formData,
+          navigate,
+        });
+      } catch (error) {
+        toast.error("Login failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
-    // }
   };
 
   const handleInputChange = (e) => {
@@ -92,27 +68,18 @@ const LoginPage = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      // height="70vh"
-      padding={15}
-    >
+    <Box display="flex" flexDirection="column" alignItems="center" padding={6}>
       <Box
         sx={{
-          width: 800,
-          padding: 3,
+          width: 600,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          borderRadius: 3,
           bgcolor: "#fff",
         }}
       >
-        {/* "log in" heading with left alignment */}
         <Typography
-          variant="h3"
+          variant="h5"
           gutterBottom
           color="#000"
           fontWeight="semibold"
@@ -127,24 +94,10 @@ const LoginPage = () => {
           log in
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{
-            textTransform: "uppercase",
-            textAlign: "left",
-            marginBottom: "15px",
-            color: "gray",
-            width: "100%",
-          }}
-        >
-          Already have an account with us? Sign in below
-        </Typography>
-
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-          {/* Phone Number Field */}
           <TextField
             fullWidth
-            margin="normal"
+            // margin="normal"
             label="Phone Number"
             name="phone"
             value={formData.phone}
@@ -164,7 +117,6 @@ const LoginPage = () => {
               ...TextFieldstyle,
             }}
           />
-          {/* Password Field */}
           <TextField
             fullWidth
             margin="normal"
@@ -193,7 +145,6 @@ const LoginPage = () => {
             }}
           />
 
-          {/* "Stay signed in" Checkbox */}
           <FormControlLabel
             control={<Checkbox defaultChecked color="default" />}
             label="Stay signed in"
@@ -207,7 +158,6 @@ const LoginPage = () => {
             }}
           />
 
-          {/* Submit Button */}
           <Button
             fullWidth
             variant="contained"
@@ -216,7 +166,7 @@ const LoginPage = () => {
               color: "white",
               fontSize: "18px",
               mt: 2,
-              "&:hover": { bgcolor: "#333" },
+              "&:hover": { bgcolor: "#ffffff", color: "black" },
               borderRadius: "0px",
               height: 50,
             }}
@@ -225,6 +175,19 @@ const LoginPage = () => {
             Sign In
           </Button>
         </form>
+        {loading && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 1000,
+            }}
+          >
+            <CircularProgress size={50} sx={{ color: "black" }} />
+          </Box>
+        )}
 
         <Button
           fullWidth

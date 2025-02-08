@@ -29,4 +29,12 @@ export const publicPaths = {
     "/secure/checkout/login-existing-customer/",
   shippingAddress: "/secure/checkout/",
   paymentStage: "/secure/checkout/payment",
+  ourStory: "/our-story",
+  referralProgram: "/referral-program",
+  faq: "/faq",
+  contactUs: "/contact-us",
+  exchange: "/exchange-policy",
+  delivery: "/delievry-policy",
+  termsAndConditions: "/terms-and-conditions",
+  privacy: "/privacy-policy",
 };

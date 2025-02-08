@@ -97,9 +97,8 @@ const Layout = ({ children }) => {
             sx={{
               // backgroundColor: "#f0c14b",
               backgroundColor: "#b8aaad",
-
               // backgroundColor: "#f3f3f3",
-              padding: "15px",
+              padding: "12px",
               textAlign: "center",
               borderTop: "none",
             }}
@@ -113,7 +112,7 @@ const Layout = ({ children }) => {
           </main>
           <footer
             style={{
-              padding: "10px",
+              // padding: "10px",
               background: "#fafafa",
             }}
           >

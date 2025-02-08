@@ -6,7 +6,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 // import theme from "config/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import App from "core";
-import Notification from "components/Notification";
 // import "./index.css";
 
 const theme = createTheme({
@@ -30,7 +29,6 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     {/* <ThemeProvider theme={theme}> */}
-    <Notification />
     <CssBaseline />
     <App />
     {/* </ThemeProvider> */}
