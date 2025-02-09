@@ -7,11 +7,7 @@ import {
   Typography,
   Link,
   Box,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
+  CircularProgress,
 } from "@mui/material";
 import authStore from "stores/authStore";
 import { useNavigate } from "react-router-dom";
@@ -31,21 +27,20 @@ const SignUpPage = () => {
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const validateForm = () => {
     const newErrors = {};
 
-    // Validate email
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Valid email is required.";
     }
 
-    // Validate password
     if (!formData.password.trim() || formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
     }
 
-    // Validate name (only letters and no special characters)
     if (!formData.name.trim() || formData.name.length < 6) {
       newErrors.name = "Name must be at least 6 characters.";
     } else if (/[^a-zA-Z\s]/.test(formData.name)) {
@@ -53,7 +48,6 @@ const SignUpPage = () => {
         "Name must only contain letters and spaces. No special characters allowed.";
     }
 
-    // Validate phone number
     if (!formData.phone.trim() || !/^\d{10}$/.test(formData.phone)) {
       newErrors.phone = "Valid 10-digit phone number is required.";
     }
@@ -66,6 +60,7 @@ const SignUpPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       const payload = {
         email: formData.email,
         name: formData.name,
@@ -74,7 +69,9 @@ const SignUpPage = () => {
         phone: formData.phone,
         countryCode: formData.countryCode,
       };
-      authStore.register({ payload, navigate });
+      authStore
+        .register({ payload, navigate })
+        .finally(() => setLoading(false));
     }
   };
 
@@ -88,21 +85,19 @@ const SignUpPage = () => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" padding={15}>
+    <Box display="flex" flexDirection="column" alignItems="center" padding={6}>
       <Box
         sx={{
-          width: 800,
-          padding: 3,
+          width: 600,
+          // padding: 3,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          borderRadius: 3,
           bgcolor: "#fff",
         }}
       >
-        {/* Heading: Create Account */}
         <Typography
-          variant="h3"
+          variant="h5"
           gutterBottom
           color="#000"
           fontWeight="semibold"
@@ -117,11 +112,10 @@ const SignUpPage = () => {
           create account
         </Typography>
 
-        {/* Email */}
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <TextField
             fullWidth
-            margin="normal"
+            // margin="normal"
             label="E-mail"
             name="email"
             value={formData.email}
@@ -136,10 +130,9 @@ const SignUpPage = () => {
             }}
           />
 
-          {/* Password */}
           <TextField
             fullWidth
-            margin="normal"
+            // margin="normal"
             label="Password"
             name="password"
             type={showPassword ? "text" : "password"}
@@ -168,7 +161,7 @@ const SignUpPage = () => {
 
           <TextField
             fullWidth
-            margin="normal"
+            // margin="normal"
             label="Full Name"
             name="name"
             value={formData.name}
@@ -182,46 +175,41 @@ const SignUpPage = () => {
               ...TextFieldstyle,
             }}
           />
-          {/* Phone and Country Code (Only India +91) */}
-          <Box display="flex" gap={1} width="100%" mt={2}>
-            <FormControl>
-              <InputLabel>Country Code</InputLabel>
-              <Select
-                value={formData.countryCode}
-                onChange={(e) =>
-                  setFormData({ ...formData, countryCode: e.target.value })
-                }
-                label="Country Code"
-                disabled
-                style={{ width: "120px" }}
-              >
-                <MenuItem value="+91">🇮🇳 +91</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              fullWidth
-              label="Mobile"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              error={!!errors.phone}
-              helperText={errors.phone}
-              variant="outlined"
+          {loading && (
+            <Box
               sx={{
-                width: "40rem",
-                ...TextFieldstyle,
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 1000,
               }}
-            />
-          </Box>
+            >
+              <CircularProgress size={50} sx={{ color: "black" }} />
+            </Box>
+          )}
+          <TextField
+            fullWidth
+            label="Mobile"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            error={!!errors.phone}
+            helperText={errors.phone}
+            variant="outlined"
+            sx={{
+              input: { color: "#000" },
+              marginBottom: 2,
+              ...TextFieldstyle,
+            }}
+          />
 
-          {/* Checkbox */}
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox defaultChecked color="default" />}
             label="I would like 10% off on my next purchase, plus personalised offers, news and the latest trends"
             sx={{ mt: 2 }}
-          />
+          /> */}
 
-          {/* Submit Button */}
           <Button
             fullWidth
             variant="contained"
@@ -229,9 +217,9 @@ const SignUpPage = () => {
               bgcolor: "black",
               color: "white",
               fontSize: "18px",
-              mt: 2,
+              mt: 1,
               height: 50,
-              "&:hover": { bgcolor: "#333" },
+              "&:hover": { bgcolor: "#ffffff", color: "black" },
               borderRadius: "0px",
             }}
             type="submit"
@@ -240,7 +228,6 @@ const SignUpPage = () => {
           </Button>
         </form>
 
-        {/* Redirect to Sign In */}
         <Typography variant="body2" mt={2}>
           Already have an account?{" "}
           <Link href="/login" sx={{ color: "black", fontWeight: "bold" }}>
@@ -248,7 +235,6 @@ const SignUpPage = () => {
           </Link>
         </Typography>
 
-        {/* Privacy and Terms */}
         <Typography
           variant="caption"
           color="textSecondary"

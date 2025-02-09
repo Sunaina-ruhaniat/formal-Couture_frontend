@@ -1,16 +1,15 @@
-import React from 'react';
-import { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { publicPaths, privatePaths } from 'config/routes';
-import PrivateRoute from 'core/PrivateRoute';
-import PublicRoute from 'core/PublicRoute';
-import LinearProgress from '@mui/material/LinearProgress';
-import Layout from 'components/Layout';
-import SignupPage from 'pages/SignUpPage';
-import AdminRoute from './AdminRoute';
-import AppSnackbar from 'components/AlertMessage';
-import ResetPassword from 'pages/resetPassword';
+import React from "react";
+import { Suspense, lazy } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { publicPaths, privatePaths } from "config/routes";
+import PrivateRoute from "core/PrivateRoute";
+import PublicRoute from "core/PublicRoute";
+import LinearProgress from "@mui/material/LinearProgress";
+import Layout from "components/Layout";
+import SignupPage from "pages/SignUpPage";
+import AdminRoute from "./AdminRoute";
+import ResetPassword from "pages/resetPassword";
 
 const LoginPage = lazy(() => import('pages/LoginPage'));
 const ForgotPasswordPage = lazy(() => import('pages/forgotPassword'));
@@ -44,14 +43,38 @@ const AdminOrderPage = lazy(() => import('pages/Admin/OrderPage'));
 const OrderDetails = lazy(() =>
 	import('pages/Admin/OrderPage/components/OrderDetailPage')
 );
-const AdminProfilePage = lazy(() => import('pages/Admin/AdminProfile'));
+const AdminProfilePage = lazy(() => import("pages/Admin/AdminProfile"));
+const CustomerCare = lazy(() => import("components/CustomerCare"));
+const ContactUs = lazy(() =>
+  import("components/CustomerCare/components/contactUs")
+);
+const PrivacyPolicy = lazy(() => import("components/Legel"));
+const TermsAndConditions = lazy(() =>
+  import("components/Legel/components/TermsAndConditions")
+);
+const ExchangePolicy = lazy(() => import("components/ExchangePolicy"));
+const DeliveryPolicy = lazy(() =>
+  import("components/ExchangePolicy/components/DeliveryPolicy")
+);
+const AboutUs = lazy(() => import("components/AboutUs"));
+const ReferralProgram = lazy(() =>
+  import("components/AboutUs/components/ReferralProgram")
+);
 
 const publicRoutes = [
-	{
-		path: publicPaths.login,
-		Component: <LoginPage open={true} handleClose={() => {}} />,
-	},
-	{
+  {
+    path: publicPaths.login,
+    Component: <LoginPage open={true} handleClose={() => {}} />,
+  },
+  {
+    path: publicPaths.home,
+    Component: <HomePage />,
+  },
+  {
+    path: publicPaths.productList,
+    Component: <ProductListPage />,
+  },
+  {
 		path: publicPaths.forgotPassword,
 		Component: <ForgotPasswordPage />,
 	},
@@ -59,80 +82,80 @@ const publicRoutes = [
     path: publicPaths.resetPassword,
     Component: <ResetPassword />
   },
-	{
-		path: publicPaths.home,
-		Component: <HomePage />,
-	},
-	{
-		path: publicPaths.productList,
-		Component: <ProductListPage />,
-	},
-	{
-		path: publicPaths.productDetail,
-		Component: <ProductDetailPage />,
-	},
-	{
-		path: publicPaths.signUp,
-		Component: <SignupPage open={true} handleClose={() => {}} />,
-	},
-	{
-		path: publicPaths.addtoCart,
-		Component: <AddToCartPage />,
-	},
-	{
-		path: publicPaths.wishlist,
-		Component: <WishListPage />,
-	},
-	{
-		path: publicPaths.secureCheckout,
-		Component: <SecureCheckoutPage />,
-	},
-	{
-		path: publicPaths.secureCheckoutLoginExistingCustomer,
-		Component: <SecureCheckoutLoginExistingCustomerPage />,
-	},
-	{
-		path: publicPaths.shippingAddress,
-		Component: <CheckoutFormPage />,
-	},
-	{
-		path: publicPaths.paymentStage,
-		Component: <PaymentPage />,
-	},
-	{
-		path: privatePaths.admin.adminProfile,
-		Component: <AdminProfilePage />,
-	},
-	{
-		path: privatePaths.admin.page,
-		Component: <AdminDashboardPage />,
-	},
-	{
-		path: privatePaths.admin.productPage,
-		Component: <AdminProductPage />,
-	},
-	{
-		path: privatePaths.admin.orders,
-		Component: <AdminOrderPage />,
-	},
-	{ path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
-	{
-		path: privatePaths.admin.adminProfile,
-		Component: <AdminProfilePage />,
-	},
-	{
-		path: privatePaths.admin.page,
-		Component: <AdminDashboardPage />,
-	},
-	{
-		path: privatePaths.admin.productPage,
-		Component: <AdminProductPage />,
-	},
-	{
-		path: privatePaths.admin.orders,
-		Component: <AdminOrderPage />,
-	},
-	{ path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
+  {
+    path: publicPaths.productDetail,
+    Component: <ProductDetailPage />,
+  },
+  {
+    path: publicPaths.signUp,
+    Component: <SignupPage open={true} handleClose={() => {}} />,
+  },
+  {
+    path: publicPaths.addtoCart,
+    Component: <AddToCartPage />,
+  },
+  {
+    path: publicPaths.wishlist,
+    Component: <WishListPage />,
+  },
+  {
+    path: publicPaths.secureCheckout,
+    Component: <SecureCheckoutPage />,
+  },
+  {
+    path: publicPaths.secureCheckoutLoginExistingCustomer,
+    Component: <SecureCheckoutLoginExistingCustomerPage />,
+  },
+  {
+    path: publicPaths.shippingAddress,
+    Component: <CheckoutFormPage />,
+  },
+  {
+    path: publicPaths.paymentStage,
+    Component: <PaymentPage />,
+  },
+  { path: publicPaths.ourStory, Component: <AboutUs /> },
+  { path: publicPaths.referralProgram, Component: <ReferralProgram /> },
+  { path: publicPaths.faq, Component: <CustomerCare /> },
+  { path: publicPaths.contactUs, Component: <ContactUs /> },
+  { path: publicPaths.exchange, Component: <ExchangePolicy /> },
+  { path: publicPaths.delivery, Component: <DeliveryPolicy /> },
+  { path: publicPaths.termsAndConditions, Component: <TermsAndConditions /> },
+  { path: publicPaths.privacy, Component: <PrivacyPolicy /> },
+  {
+    path: privatePaths.admin.adminProfile,
+    Component: <AdminProfilePage />,
+  },
+  {
+    path: privatePaths.admin.page,
+    Component: <AdminDashboardPage />,
+  },
+  {
+    path: privatePaths.admin.productPage,
+    Component: <AdminProductPage />,
+  },
+  {
+    path: privatePaths.admin.orders,
+    Component: <AdminOrderPage />,
+  },
+  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
+  {
+    path: privatePaths.admin.adminProfile,
+    Component: <AdminProfilePage />,
+  },
+  {
+    path: privatePaths.admin.page,
+    Component: <AdminDashboardPage />,
+  },
+  {
+    path: privatePaths.admin.productPage,
+    Component: <AdminProductPage />,
+  },
+  {
+    path: privatePaths.admin.orders,
+    Component: <AdminOrderPage />,
+  },
+  { path: privatePaths.admin.orderDetails, Component: <OrderDetails /> },
 ];
 
 const customerRoutes = [

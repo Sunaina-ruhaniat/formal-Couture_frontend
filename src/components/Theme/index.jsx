@@ -8,12 +8,15 @@ export const TextFieldstyle = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "#000",
+      borderRadius: "0px",
     },
     "&:hover fieldset": {
       borderColor: "#B2BAC2",
+      borderRadius: "0px",
     },
     "&.Mui-focused fieldset": {
       borderColor: "#6F7E8C",
+      borderRadius: "0px",
     },
   },
 };

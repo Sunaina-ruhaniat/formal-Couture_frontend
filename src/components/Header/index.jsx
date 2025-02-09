@@ -21,7 +21,7 @@ const Header = observer(() => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const [searchedProducts, setSearchedProducts] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
-  console.log("isLoggedIn", isLoggedIn);
+
   useEffect(() => {
     const products = toJS(cartStore.cart.products);
     if (products) {
