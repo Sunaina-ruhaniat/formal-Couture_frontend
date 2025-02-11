@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 // import theme from "config/theme";
 import CssBaseline from "@mui/material/CssBaseline";
+import Notification from "components/Notifications";
 import App from "core";
 // import "./index.css";
 
@@ -30,6 +31,7 @@ root.render(
   <BrowserRouter>
     {/* <ThemeProvider theme={theme}> */}
     <CssBaseline />
+    <Notification />
     <App />
     {/* </ThemeProvider> */}
   </BrowserRouter>
